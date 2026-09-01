@@ -1,0 +1,17 @@
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.BLL.deps.json
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.BLL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.BLL.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.DAL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.DAL.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.csproj.AssemblyReference.cache
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.AssemblyInfoInputs.cache
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.AssemblyInfo.cs
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.csproj.CoreCompileInputs.cache
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\Yashfeen.873C93C1.Up2Date
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\refint\YashfeenMedical.BLL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\ref\YashfeenMedical.BLL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.Infrastructure.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.Infrastructure.pdb

@@ -1,0 +1,15 @@
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\bin\Debug\net10.0\YashfeenMedical.Infrastructure.deps.json
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\bin\Debug\net10.0\YashfeenMedical.Infrastructure.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\bin\Debug\net10.0\YashfeenMedical.Infrastructure.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.AssemblyInfo.cs
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\refint\YashfeenMedical.Infrastructure.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\YashfeenMedical.Infrastructure.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\ref\YashfeenMedical.Infrastructure.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\bin\Debug\net10.0\YashfeenMedical.DAL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\bin\Debug\net10.0\YashfeenMedical.DAL.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.Infrastructure\obj\Debug\net10.0\Yashfeen.699A0922.Up2Date

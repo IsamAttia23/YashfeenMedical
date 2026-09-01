@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="YashfeenMedical.BLL/YashfeenMedical.BLL.csproj" />
+  <Project Path="YashfeenMedical.DAL/YashfeenMedical.DAL.csproj" />
+  <Project Path="YashfeenMedical.Infrastructure/YashfeenMedical.Infrastructure.csproj" Id="4d027378-319b-4722-b738-312bf837eaa1" />
+  <Project Path="YashfeenMedical/YashfeenMedical.API.csproj" />
+</Solution>
