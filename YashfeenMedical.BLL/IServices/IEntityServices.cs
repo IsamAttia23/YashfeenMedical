@@ -3,7 +3,7 @@ using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.QueryModels;
 using YashfeenMedical.DAL.Shared.Entities;
 
-namespace OrdersApi.BusinessLogic.IEntityServices
+namespace YashfeenMedical.BLL.IServices
 {
     public interface IEntityServices<TEntity, TId, TDto, TCreationDto, TUpdateDto>
         where TEntity : class, IEntity<TId>

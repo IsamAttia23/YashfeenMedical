@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace YashfeenMedical.BLL.DTOs.Users
+namespace YashfeenMedical.BLL.DTOs.Auth
 {
     public class ChangePasswordDto
     {

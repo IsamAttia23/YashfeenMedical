@@ -15,3 +15,4 @@ C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\Y
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\ref\YashfeenMedical.BLL.dll
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.Infrastructure.dll
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\bin\Debug\net10.0\YashfeenMedical.Infrastructure.pdb
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.BLL\obj\Debug\net10.0\YashfeenMedical.BLL.sourcelink.json

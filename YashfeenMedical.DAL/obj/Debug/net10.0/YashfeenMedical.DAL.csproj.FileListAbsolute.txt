@@ -12,3 +12,4 @@ C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.DAL\obj\Debug\net10.0\r
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.DAL\obj\Debug\net10.0\YashfeenMedical.DAL.pdb
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.DAL\obj\Debug\net10.0\YashfeenMedical.DAL.genruntimeconfig.cache
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.DAL\obj\Debug\net10.0\ref\YashfeenMedical.DAL.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical.DAL\obj\Debug\net10.0\YashfeenMedical.DAL.sourcelink.json

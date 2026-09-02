@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("babaf975-8482-448f-ac7b-56c481995048")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("YashfeenMedical.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d42e68d258e075d7b3317f7ed82e8d573b7ed0d5")]
 [assembly: System.Reflection.AssemblyProductAttribute("YashfeenMedical.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YashfeenMedical.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

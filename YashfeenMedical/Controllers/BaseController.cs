@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OrdersApi.BusinessLogic.IEntityServices;
+using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.QueryModels;
 using YashfeenMedical.DAL.Shared.Entities;
 

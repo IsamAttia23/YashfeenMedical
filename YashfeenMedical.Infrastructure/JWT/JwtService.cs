@@ -79,10 +79,8 @@ public class JwtService : IJwtService
 
     public async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user)
     {
-        var RequestedUser = await GetUser(user.Email);
-
-        var userClaims = await _userManager.GetClaimsAsync(RequestedUser);
-        var userRolews = await _userManager.GetRolesAsync(RequestedUser);
+        var userClaims = await _userManager.GetClaimsAsync(user);
+        var userRolews = await _userManager.GetRolesAsync(user);
         var roleCalims = new List<Claim>();
 
         foreach (var role in userRolews)
@@ -90,10 +88,10 @@ public class JwtService : IJwtService
 
         var claims = new[]
         {
-               new Claim(JwtRegisteredClaimNames.Sub , RequestedUser.UserName),
-               new Claim(JwtRegisteredClaimNames.Email , RequestedUser.Email),
+               new Claim(JwtRegisteredClaimNames.Sub , user.UserName),
+               new Claim(JwtRegisteredClaimNames.Email , user.Email),
                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-               new Claim("userId",RequestedUser.Id)
+               new Claim("userId",user.Id)
             }
         .Union(userClaims)
         .Union(roleCalims);

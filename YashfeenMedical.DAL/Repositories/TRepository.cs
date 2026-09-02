@@ -72,7 +72,7 @@ namespace YashfeenMedical.DAL.Repositories
             var totalCount = await entities.CountAsync();
 
             var pagedList = await entities.Skip((pageNumber - 1) * pageSize)
-                .Take(query.PageSize).ToListAsync();
+                .Take(pageSize).ToListAsync();
 
             var result = new TPaginationQueryModel<TEntity>
             {

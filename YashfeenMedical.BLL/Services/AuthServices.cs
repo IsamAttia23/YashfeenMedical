@@ -8,7 +8,6 @@ using System.Security.Cryptography;
 using System.Text;
 using YashfeenMedical.BLL.DTOs.Auth;
 using YashfeenMedical.BLL.DTOs.Patients;
-using YashfeenMedical.BLL.DTOs.Users;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Models;
@@ -38,7 +37,7 @@ namespace YashfeenMedical.BLL.Services
             _fileStorageService = fileStorageService;
         }
 
-        public async Task<RefreshToken> AssignRefreshTokenToUser(ApplicationUser user, AuthDto authDto)
+        private async Task<RefreshToken> AssignRefreshTokenToUser(ApplicationUser user, AuthDto authDto)
         {
             var refreshToken = new RefreshToken();
             if (user.RefreshTokens.Any(t => t.IsActive is true))
@@ -67,7 +66,7 @@ namespace YashfeenMedical.BLL.Services
 
             var result = await _userManagmentServices.ChangePasswordAsync(user, passwordDto.CurrentPassword, passwordDto.NewPassword);
             if (!result.Succeeded)
-                throw new InternalServerErorrException($"Can't change password :{result.Errors} ");
+                throw new BadRequestException($"Can't change password :{result.Errors} ");
         }
 
         public async Task<AuthDto> LoginAsync(LoginDto loginDto)
@@ -127,9 +126,6 @@ namespace YashfeenMedical.BLL.Services
 
             var newRefreshToken = await AssignRefreshTokenToUser(user, authDto);
 
-            user.RefreshTokens.Add(newRefreshToken);
-            await _userManagmentServices.UpdateUserAsync(user);
-
             authDto.Email = user.Email;
             authDto.RefreshToken = newRefreshToken.Token;
 
@@ -176,7 +172,6 @@ namespace YashfeenMedical.BLL.Services
                 var createResult = await _userManagmentServices.CreateUserAsync(user, creationDto.Password);
                 if (!createResult.Succeeded)
                 {
-                    await _unitOfWork.RollbackTransactionAsync();
                     throw new InternalServerErorrException(
                         string.Join(", ", createResult.Errors.Select(e => e.Description)));
                 }
@@ -202,7 +197,7 @@ namespace YashfeenMedical.BLL.Services
                     _fileStorageService.DeleteFile(profilePicturePath);
 
                 throw new InternalServerErorrException(
-        ex.InnerException?.Message ?? ex.Message);
+                ex.InnerException?.Message ?? ex.Message);
             }
 
             var result = _mapper.Map<PatientDto>(mappedPatient);

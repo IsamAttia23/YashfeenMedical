@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YashfeenMedical.BLL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d42e68d258e075d7b3317f7ed82e8d573b7ed0d5")]
 [assembly: System.Reflection.AssemblyProductAttribute("YashfeenMedical.BLL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YashfeenMedical.BLL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

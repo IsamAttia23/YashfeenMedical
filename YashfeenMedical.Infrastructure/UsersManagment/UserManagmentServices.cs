@@ -78,7 +78,7 @@ namespace YashfeenMedical.Infrastructure.UsersManagment
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
-            var result = _userManager.Users;
+            var result = await _userManager.Users.ToListAsync();
             return result;
         }
 

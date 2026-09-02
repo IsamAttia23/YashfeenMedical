@@ -1,6 +1,6 @@
 ﻿using MapsterMapper;
 using Microsoft.AspNetCore.Mvc;
-using OrdersApi.BusinessLogic.IEntityServices;
+using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.QueryModels;
 using YashfeenMedical.DAL.Shared.Entities;
@@ -8,84 +8,83 @@ using YashfeenMedical.Infrastructure.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 
-namespace OrdersApi.BusinessLogic.EntityServices
+namespace YashfeenMedical.BLL.Services;
+
+public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDto> :
+    IEntityServices<TEntity, TId, TDto, TCreationDto, TUpdateDto>
+
+    where TEntity : class, IEntity<TId>
+    where TId : struct
+    where TDto : class, TIdType<TId>
+    where TCreationDto : class
+    where TUpdateDto : class, TIdType<TId>
 {
-    public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDto> :
-        IEntityServices<TEntity, TId, TDto, TCreationDto, TUpdateDto>
+    private readonly IRepository<TEntity, TId> _repository;
+    private readonly IMapper _mapper;
 
-        where TEntity : class, IEntity<TId>
-        where TId : struct
-        where TDto : class, TIdType<TId>
-        where TCreationDto : class
-        where TUpdateDto : class, TIdType<TId>
+    public TEntityService(IRepository<TEntity, TId> repository, IMapper mapper)
     {
-        private readonly IRepository<TEntity, TId> _repository;
-        private readonly IMapper _mapper;
+        _repository = repository;
+        _mapper = mapper;
+    }
 
-        public TEntityService(IRepository<TEntity, TId> repository, IMapper mapper)
-        {
-            _repository = repository;
-            _mapper = mapper;
-        }
+    public virtual async Task<TDto> Add(TCreationDto creationDTO)
+    {
+        var entity = _mapper.Map<TEntity>(creationDTO);
 
-        public virtual async Task<TDto> Add(TCreationDto creationDTO)
-        {
-            var entity = _mapper.Map<TEntity>(creationDTO);
+        entity.CreatedOn = DateTimeOffset.UtcNow;
 
-            entity.CreatedOn = DateTimeOffset.UtcNow;
+        await _repository.Add(entity);
+        await _repository.SaveChanges();
 
-            await _repository.Add(entity);
-            await _repository.SaveChanges();
+        var result = _mapper.Map<TDto>(entity);
 
-            var result = _mapper.Map<TDto>(entity);
+        return result;
+    }
 
-            return result;
-        }
+    public virtual async Task Delete(TId id)
+    {
+        var entity = await Details(id);
 
-        public virtual async Task Delete(TId id)
-        {
-            var entity = await Details(id);
+        await _repository.Delete(id);
+        await _repository.SaveChanges();
+    }
 
-            await _repository.Delete(id);
-            await _repository.SaveChanges();
-        }
+    public virtual async Task<TPaginationQueryModel<TDto>> GetAll(PaginationQuery query)
+    {
+        var pagedEntities = await _repository.GetAll(query);
 
-        public virtual async Task<TPaginationQueryModel<TDto>> GetAll(PaginationQuery query)
-        {
-            var pagedEntities = await _repository.GetAll(query);
+        var result = _mapper.Map<TPaginationQueryModel<TDto>>(pagedEntities);
 
-            var result = _mapper.Map<TPaginationQueryModel<TDto>>(pagedEntities);
+        return result;
+    }
 
-            return result;
-        }
+    public virtual async Task<TDto?> Details(TId id)
+    {
+        var entity = await _repository.GetById(id);
+        if (entity == null)
+            throw new NotFoundException("The request entity dosen't exits");
 
-        public virtual async Task<TDto?> Details(TId id)
-        {
-            var entity = await _repository.GetById(id);
-            if (entity == null)
-                throw new NotFoundException("The request entity dosen't exits");
+        var result = _mapper.Map<TDto>(entity);
 
-            var result = _mapper.Map<TDto>(entity);
+        return result;
+    }
 
-            return result;
-        }
+    public virtual async Task<TDto> Update(TId id, TUpdateDto updateDto)
+    {
+        var entity = await _repository.GetById(id);
 
-        public virtual async Task<TDto> Update(TId id, TUpdateDto updateDto)
-        {
-            var entity = await _repository.GetById(id);
+        if (entity == null)
+            throw new NotFoundException("The request entity dosen't exits");
 
-            if (entity == null)
-                throw new NotFoundException("The request entity dosen't exits");
+        var mappedEntity = _mapper.Map(updateDto, entity);
 
-            var mappedEntity = _mapper.Map(updateDto, entity);
+        mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
 
-            mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
+        await _repository.Update(mappedEntity);
+        await _repository.SaveChanges();
 
-            await _repository.Update(mappedEntity);
-            await _repository.SaveChanges();
-
-            var result = _mapper.Map<TDto>(mappedEntity);
-            return result;
-        }
+        var result = _mapper.Map<TDto>(mappedEntity);
+        return result;
     }
 }

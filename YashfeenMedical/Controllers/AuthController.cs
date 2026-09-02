@@ -51,7 +51,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok();
         }
 
-        [HttpPost("register-Patient")]
+        [HttpPost("register-patient")]
         public async Task<IActionResult> RegisterPatientAsync([FromForm] PatientCreationDto creationDto)
         {
             if(!ModelState.IsValid)
@@ -59,6 +59,13 @@ namespace YashfeenMedical.API.Controllers
 
             var result = await _authServices.RegisterPatientAsync(creationDto);
             return Ok(result);
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDto passwordDto)
+        {
+            await _authServices.ChangePasswordAsync(passwordDto);
+            return Ok("password changed successfuly");
         }
 
         private void SetRefreshTokenInCookie(string refreshToken, DateTimeOffset expireDate)
