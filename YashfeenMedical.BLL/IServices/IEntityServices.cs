@@ -5,8 +5,7 @@ using YashfeenMedical.DAL.Shared.Entities;
 
 namespace YashfeenMedical.BLL.IServices
 {
-    public interface IEntityServices<TEntity, TId, TDto, TCreationDto, TUpdateDto>
-        where TEntity : class, IEntity<TId>
+    public interface IEntityServices<TId, TDto, TCreationDto, TUpdateDto>
         where TId : struct
         where TDto : class , TIdType<TId>
         where TCreationDto : class

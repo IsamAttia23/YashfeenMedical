@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 namespace YashfeenMedical.BLL.Services;
 
 public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDto> :
-    IEntityServices<TEntity, TId, TDto, TCreationDto, TUpdateDto>
+    IEntityServices<TId, TDto, TCreationDto, TUpdateDto>
 
     where TEntity : class, IEntity<TId>
     where TId : struct

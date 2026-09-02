@@ -7,23 +7,22 @@ using YashfeenMedical.DAL.Shared.Entities;
 namespace YashfeenMedical.API.Controllers
 {
     [ApiController]
-    public class BaseController<TEntity, TId, TSercices, TDto, TCreationDto, TUpdateDto> : ControllerBase
-        where TEntity : class, IEntity<TId>
+    public class BaseController<TId, TServcices, TDto, TCreationDto, TUpdateDto> : ControllerBase
         where TId : struct
-        where TSercices : class, IEntityServices<TEntity, TId, TDto, TCreationDto, TUpdateDto>
+        where TServcices : class, IEntityServices<TId, TDto, TCreationDto, TUpdateDto>
         where TDto : class, TIdType<TId>
         where TCreationDto : class
         where TUpdateDto : class, TIdType<TId>
     {
-        protected readonly TSercices _services;
+        protected readonly TServcices _services;
 
-        public BaseController(TSercices sercices)
+        public BaseController(TServcices services)
         {
-            _services = sercices;
+            _services = services;
         }
 
-        [HttpGet]
-        public virtual async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
+
+        protected virtual async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

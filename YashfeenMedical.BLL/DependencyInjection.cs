@@ -20,6 +20,7 @@ namespace YashfeenMedical.BLL
             services.AddInfrastructureServices(configuration);
 
             services.AddScoped<IAuthServices,AuthServices>();
+            services.AddScoped<IPatientServices, PatientServices>();
             return services;
         }
     }

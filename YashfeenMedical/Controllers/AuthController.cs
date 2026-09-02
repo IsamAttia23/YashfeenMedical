@@ -54,7 +54,7 @@ namespace YashfeenMedical.API.Controllers
         [HttpPost("register-patient")]
         public async Task<IActionResult> RegisterPatientAsync([FromForm] PatientCreationDto creationDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _authServices.RegisterPatientAsync(creationDto);
@@ -64,6 +64,9 @@ namespace YashfeenMedical.API.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDto passwordDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             await _authServices.ChangePasswordAsync(passwordDto);
             return Ok("password changed successfuly");
         }
