@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using YashfeenMedical.BLL.DTOs.Users;
 using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.Shared.Entities;
 
@@ -30,5 +31,7 @@ namespace YashfeenMedical.BLL.DTOs.Patients
 
         [Required]
         public Gender Gender { get; set; }
+
+        public UserUpdateDto UserUpdateDto { get; set; }
     }
 }

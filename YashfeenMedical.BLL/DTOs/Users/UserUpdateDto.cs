@@ -5,7 +5,7 @@ using System.Text;
 
 namespace YashfeenMedical.BLL.DTOs.Users
 {
-    public class UserUpdateModel
+    public class UserUpdateDto
     {
         [Required(ErrorMessage = "user name is required")]
         [StringLength(50, ErrorMessage = "user name cannot exceed 50 characters")]

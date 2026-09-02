@@ -288,7 +288,7 @@
             }
           },
           {
-            "name": "Allergies",
+            "name": "HasAllergies",
             "in": "query",
             "schema": {
               "type": "boolean"
@@ -651,6 +651,34 @@
           },
           "gender": {
             "$ref": "#/components/schemas/Gender"
+          },
+          "userUpdateDto": {
+            "$ref": "#/components/schemas/UserUpdateDto"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserUpdateDto": {
+        "required": [
+          "email",
+          "userName"
+        ],
+        "type": "object",
+        "properties": {
+          "userName": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "format": "tel",
+            "nullable": true
           }
         },
         "additionalProperties": false

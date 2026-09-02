@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YashfeenMedical.DAL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66a9b889c4ef4061b970d6b5a898a97608802d4d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f1e76fef4daf5df2fc374e151650ffbb2dfe998b")]
 [assembly: System.Reflection.AssemblyProductAttribute("YashfeenMedical.DAL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YashfeenMedical.DAL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

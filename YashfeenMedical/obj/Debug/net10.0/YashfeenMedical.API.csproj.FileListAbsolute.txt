@@ -180,3 +180,5 @@ C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical\bin\Debug\net10.0\Swash
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical\bin\Debug\net10.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical\obj\Debug\net10.0\YashfeenMedical.API.sourcelink.json
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical\bin\Debug\net10.0\Castle.Core.dll
+C:\Users\Hp\source\repos\YashfeenMedical\YashfeenMedical\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Proxies.dll
