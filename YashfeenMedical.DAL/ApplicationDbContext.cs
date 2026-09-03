@@ -38,7 +38,7 @@ namespace YashfeenMedical.DAL
 
             builder.Entity<ApplicationUser>().ToTable("Users", "security")
                 .Property(p => p.PhoneNumber).IsRequired();
-            builder.Entity<IdentityUserClaim<string>>().ToTable("UesrClaims", "security");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims", "security");
             builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles", "security");
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins", "security");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens", "security");

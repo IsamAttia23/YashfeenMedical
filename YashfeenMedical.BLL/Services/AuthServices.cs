@@ -147,6 +147,8 @@ namespace YashfeenMedical.BLL.Services
             string? profilePicturePath = null;
             if (creationDto.ProfilePicture != null)
             {
+                FileValidationRules.Validate(creationDto.ProfilePicture, "ProfilePhoto");
+
                 var (_, relativePath) = await _fileStorageService.SaveFileAsync(
                     creationDto.ProfilePicture.OpenReadStream(),
                     creationDto.ProfilePicture.FileName,
