@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
@@ -12,7 +13,8 @@ namespace YashfeenMedical.DAL.Repositories
         private readonly ApplicationDbContext _context;
 
         public override IQueryable<Patient> SelectQuery => _context.Set<Patient>()
-            .Where(p => p.DeletedOn == null).Include(p => p.ApplicationUser);
+            .Where(p => p.DeletedOn == null)
+            .Include(p => p.ApplicationUser);
 
         public PatientRepository(ApplicationDbContext context) : base(context)
         {
@@ -23,12 +25,12 @@ namespace YashfeenMedical.DAL.Repositories
         {
             var patients = SelectQuery;
 
-            if (!string.IsNullOrWhiteSpace(queryModel.Search))
+            if (!string.IsNullOrWhiteSpace(queryModel.SearchTerm))
             {
                 patients = patients.Where(p =>
-                    p.FullName.Contains(queryModel.Search) ||
-                    p.NationalId.Contains(queryModel.Search) ||
-                    p.ApplicationUser.Email!.Contains(queryModel.Search));
+                    p.FullName.Contains(queryModel.SearchTerm) ||
+                    p.NationalId.Contains(queryModel.SearchTerm) ||
+                    p.ApplicationUser.Email!.Contains(queryModel.SearchTerm));
             }
 
             if (!string.IsNullOrWhiteSpace(queryModel.FullName))
@@ -55,62 +57,30 @@ namespace YashfeenMedical.DAL.Repositories
                     p.Gender == queryModel.Gender.Value);
             }
 
-            if (queryModel.DateOfBirthFrom.HasValue)
+            if (queryModel.AgeFrom.HasValue)
             {
                 patients = patients.Where(p =>
-                    p.DateOfBirth >= queryModel.DateOfBirthFrom.Value);
+                    p.DateOfBirth >= queryModel.AgeFrom.Value);
             }
 
-            if (queryModel.DateOfBirthTo.HasValue)
+            if (queryModel.AgeTo.HasValue)
             {
                 patients = patients.Where(p =>
-                    p.DateOfBirth <= queryModel.DateOfBirthTo.Value);
-            }
-
-            if (queryModel.HasAllergies.HasValue)
-            {
-                if (queryModel.HasAllergies.Value)
-                {
-                    patients = patients.Where(p =>
-                        p.Allergies != null &&
-                        p.Allergies != "");
-                }
-                else
-                {
-                    patients = patients.Where(p =>
-                        p.Allergies == null ||
-                        p.Allergies == "");
-                }
-            }
-
-            if (queryModel.HasChronicDiseases.HasValue)
-            {
-                if (queryModel.HasChronicDiseases.Value)
-                {
-                    patients = patients.Where(p =>
-                        p.ChronicDiseases != null &&
-                        p.ChronicDiseases != "");
-                }
-                else
-                {
-                    patients = patients.Where(p =>
-                        p.ChronicDiseases == null ||
-                        p.ChronicDiseases == "");
-                }
+                    p.DateOfBirth <= queryModel.AgeTo.Value);
             }
 
             // Sorting
             patients = queryModel.SortBy?.ToLower() switch
             {
-                "fullname" => queryModel.SortDescending
+                "fullname" => queryModel.SortDirection == SortDirection.Ascending
                     ? patients.OrderByDescending(p => p.FullName)
                     : patients.OrderBy(p => p.FullName),
 
-                "dateofbirth" => queryModel.SortDescending
+                "dateofbirth" => queryModel.SortDirection == SortDirection.Ascending
                     ? patients.OrderByDescending(p => p.DateOfBirth)
                     : patients.OrderBy(p => p.DateOfBirth),
 
-                "nationalid" => queryModel.SortDescending
+                "nationalid" => queryModel.SortDirection == SortDirection.Ascending
                     ? patients.OrderByDescending(p => p.NationalId)
                     : patients.OrderBy(p => p.NationalId),
 
@@ -119,17 +89,18 @@ namespace YashfeenMedical.DAL.Repositories
             return patients;
         }
 
-        public async Task<TPaginationQueryModel<Patient>> GetFilteredPatientsWithPaginationAsync(PatientQueryModel queryModel, PaginationQuery paginationQuery)
+        public async Task<TPaginationQueryModel<Patient>> GetFilteredPatientsWithPaginationAsync(PatientQueryModel queryModel)
         {
             var ordersList = GetFilteredPatientsAsync(queryModel)
-               .Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize)
-               .Take(paginationQuery.PageSize);
+               .Skip((queryModel.PageNumber - 1) * queryModel.PageSize)
+               .Take(queryModel.PageSize);
 
-            var paggedOrders = GetPaggedList(ordersList, paginationQuery);
+            var paggedOrders = GetPaggedList(ordersList, queryModel);
 
 
 
             return await paggedOrders;
         }
+
     }
 }

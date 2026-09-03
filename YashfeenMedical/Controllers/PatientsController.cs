@@ -18,10 +18,17 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPatientsAsync([FromQuery] PatientQueryModel patientQuery, [FromQuery] PaginationQuery paginationQuery)
+        public async Task<IActionResult> GetPatientsAsync([FromQuery] PatientQueryModel patientQuery)
         {
-            var patients = await _patientServices.GetFilterdOrders(patientQuery, paginationQuery);
+            var patients = await _patientServices.GetFilterdPatients(patientQuery);
             return Ok(patients);
+        }
+
+        [HttpGet("{id}/appointments")]
+        public async Task<IActionResult> GetPatientAppointments(int id, [FromQuery] PatientAppointmentsQueryModel queryModel)
+        {
+            var result = await _patientServices.GetPaitentAppointments(queryModel, id);
+            return Ok(result);
         }
     }
 }

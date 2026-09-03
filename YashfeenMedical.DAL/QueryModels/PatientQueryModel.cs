@@ -5,30 +5,22 @@ using YashfeenMedical.DAL.Enums;
 
 namespace YashfeenMedical.DAL.QueryModels
 {
-    public class PatientQueryModel
+    public class PatientQueryModel : PaginationQuery
     {
-        public string? Search { get; set; }
-
         public string? FullName { get; set; }
 
         public string? NationalId { get; set; }
+
+        public string? Phone { get; set; }
+
+        public bool? IsActive { get; set; }
 
         public BloodType? BloodType { get; set; }
 
         public Gender? Gender { get; set; }
 
-        public DateOnly? DateOfBirthFrom { get; set; }
+        public DateOnly? AgeFrom { get; set; }
 
-        public DateOnly? DateOfBirthTo { get; set; }
-
-        public string? Address { get; set; }
-
-        public bool? HasAllergies { get; set; }
-
-        public bool? HasChronicDiseases { get; set; }
-
-        //sorting
-        public string? SortBy { get; set; }
-        public bool SortDescending { get; set; } = false;
+        public DateOnly? AgeTo { get; set; }
     }
 }
