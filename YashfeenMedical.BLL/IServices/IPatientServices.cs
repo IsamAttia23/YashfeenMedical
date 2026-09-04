@@ -15,7 +15,7 @@ namespace YashfeenMedical.BLL.IServices
     {
         Task<TPaginationQueryModel<PatientDto>> GetFilterdPatients(PatientQueryModel queryModel);
         Task<TPaginationQueryModel<AppointmentDto>> GetPaitentAppointments(PatientAppointmentsQueryModel queryModel, int paitentId);
-        Task<TPaginationQueryModel<MedicalRecordDto>> GetPaitentAppointments(PaginationQuery queryModel, int paitentId);
+        Task<TPaginationQueryModel<MedicalRecordDto>> GetPaitentMedicalRecords(PaginationQuery queryModel, int paitentId);
         Task<TPaginationQueryModel<PrescriptionDto>> GetPaitentPrescriptions(PaginationQuery queryModel, int paitentId);
         Task<TPaginationQueryModel<InvoiceDto>> GetPaitentInvoices(PaginationQuery queryModel, int paitentId);
         Task<TPaginationQueryModel<MedicalFileDto>> GetPaitentMedicalFiles(PaginationQuery queryModel, int paitentId);
