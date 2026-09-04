@@ -9,11 +9,18 @@ namespace YashfeenMedical.DAL.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public override IQueryable<Invoice> SelectQuery => _context.Set<Invoice>();
+        public override IQueryable<Invoice> SelectQuery => _context.Set<Invoice>()
+            .Where(i => i.DeletedOn == null);
 
         public InvoiceRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<IQueryable<Invoice>> GetInvoicesByPatientId(int patientId)
+        {
+            var result = SelectQuery.Where(i => i.PatientId == patientId);
+            return result;
         }
     }
 }

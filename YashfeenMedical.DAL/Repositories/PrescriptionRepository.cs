@@ -8,11 +8,19 @@ namespace YashfeenMedical.DAL.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public override IQueryable<Prescription> SelectQuery => _context.Set<Prescription>();
+        public override IQueryable<Prescription> SelectQuery => _context.Set<Prescription>()
+            .Where(p => p.DeletedOn == null);
 
         public PrescriptionRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<IQueryable<Prescription>> GetPrescriptionsByPatientId(int patientId)
+        {
+            var result = SelectQuery.Where(p => p.MedicalRecord.Appointment.PatientId == patientId);
+
+            return result; 
         }
     }
 }

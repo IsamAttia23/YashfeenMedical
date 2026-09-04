@@ -30,5 +30,33 @@ namespace YashfeenMedical.API.Controllers
             var result = await _patientServices.GetPaitentAppointments(queryModel, id);
             return Ok(result);
         }
+
+        [HttpGet("{id}/medical-records")]
+        public async Task<IActionResult> GetPatientMedicalRecords(int id, [FromQuery] PaginationQuery queryModel)
+        {
+            var result = await _patientServices.GetPaitentAppointments(queryModel, id);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/prescriptions")]
+        public async Task<IActionResult> GetPatientPrescriptions(int id, [FromQuery] PaginationQuery queryModel)
+        {
+            var result = await _patientServices.GetPaitentPrescriptions(queryModel, id);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/invoices")]
+        public async Task<IActionResult> GetPatientInvoices(int id, [FromQuery] PaginationQuery queryModel)
+        {
+            var result = await _patientServices.GetInvoicePrescriptions(queryModel, id);
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/files")]
+        public async Task<IActionResult> GetPatientMedicalFiles(int id, [FromQuery] PaginationQuery queryModel)
+        {
+            var result = await _patientServices.GetPaitentMedicalFiles(queryModel, id);
+            return Ok(result);
+        }
     }
 }
