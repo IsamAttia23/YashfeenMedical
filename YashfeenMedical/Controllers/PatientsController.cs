@@ -58,5 +58,12 @@ namespace YashfeenMedical.API.Controllers
             var result = await _patientServices.GetPaitentMedicalFiles(queryModel, id);
             return Ok(result);
         }
+
+        [HttpPatch("{id}/toggle-activity")]
+        public async Task<IActionResult> TogglePatientActivity(int id)
+        {
+            var result = await _patientServices.TogglePatientActivitiy(id);
+            return Ok(result);
+        }
     }
 }

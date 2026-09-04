@@ -1,4 +1,5 @@
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore.Storage;
 using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Invoices;
 using YashfeenMedical.BLL.DTOs.MedicalFiles;
@@ -9,6 +10,8 @@ using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
+using YashfeenMedical.Infrastructure.Exceptions;
+using YashfeenMedical.Infrastructure.UsersManagment;
 
 namespace YashfeenMedical.BLL.Services
 {
@@ -20,12 +23,13 @@ namespace YashfeenMedical.BLL.Services
         private readonly IPrescriptionRepository _prescriptionRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IMedicalFileRepository _medicalFileRepository;
+        private readonly IUserManagmentServices _userManagmentServices;
         private readonly IMapper _mapper;
 
         public PatientServices(IPatientRepository repository, IMapper mapper
             , IAppointmentRepository appointmentRepository, IMedicalRecordRepository medicalRecordRepository,
               IPrescriptionRepository prescriptionRepository, IInvoiceRepository invoiceRepository,
-              IMedicalFileRepository medicalFileRepository) : base(repository, mapper)
+              IMedicalFileRepository medicalFileRepository, IUserManagmentServices userManagmentServices) : base(repository, mapper)
         {
             _repository = repository;
             _appointmentRepository = appointmentRepository;
@@ -33,6 +37,7 @@ namespace YashfeenMedical.BLL.Services
             _prescriptionRepository = prescriptionRepository;
             _invoiceRepository = invoiceRepository;
             _medicalFileRepository = medicalFileRepository;
+            _userManagmentServices = userManagmentServices;
             _mapper = mapper;
         }
 
@@ -89,6 +94,25 @@ namespace YashfeenMedical.BLL.Services
             var result = _mapper.Map<TPaginationQueryModel<PrescriptionDto>>(paggedList);
 
             return result;
+        }
+
+        public async Task<string> TogglePatientActivitiy(int patientId)
+        {
+            var patient = await _repository.GetById(patientId);
+            var user = await _userManagmentServices.FindUserAsync(patient.UserId);
+
+            if (user.IsActive == false)
+            {
+                user.IsActive = true;
+                await _userManagmentServices.UpdateUserAsync(user);
+                return "patient activated successfully";
+            }
+            else
+            {
+                user.IsActive = false;
+                await _userManagmentServices.UpdateUserAsync(user);
+                return "patient deactivated successfully";
+            }
         }
     }
 }

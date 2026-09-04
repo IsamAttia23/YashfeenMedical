@@ -41,7 +41,7 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> Add([FromBody] TCreationDto creationDto)
+        protected virtual async Task<IActionResult> Add([FromBody] TCreationDto creationDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
