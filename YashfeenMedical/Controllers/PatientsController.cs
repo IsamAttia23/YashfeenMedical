@@ -34,7 +34,7 @@ namespace YashfeenMedical.API.Controllers
         [HttpGet("{id}/medical-records")]
         public async Task<IActionResult> GetPatientMedicalRecords(int id, [FromQuery] PaginationQuery queryModel)
         {
-            var result = await _patientServices.GetPaitentAppointments(queryModel, id);
+            var result = await _patientServices.GetPaitentMedicalRecords(queryModel, id);
             return Ok(result);
         }
 
@@ -48,7 +48,7 @@ namespace YashfeenMedical.API.Controllers
         [HttpGet("{id}/invoices")]
         public async Task<IActionResult> GetPatientInvoices(int id, [FromQuery] PaginationQuery queryModel)
         {
-            var result = await _patientServices.GetInvoicePrescriptions(queryModel, id);
+            var result = await _patientServices.GetPaitentInvoices(queryModel, id);
             return Ok(result);
         }
 
