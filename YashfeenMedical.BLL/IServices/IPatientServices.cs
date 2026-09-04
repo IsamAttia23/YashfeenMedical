@@ -1,4 +1,5 @@
-﻿using YashfeenMedical.BLL.DTOs.Appointments;
+﻿using Microsoft.AspNetCore.Http;
+using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Invoices;
 using YashfeenMedical.BLL.DTOs.MedicalFiles;
 using YashfeenMedical.BLL.DTOs.MedicalRecords;
@@ -20,5 +21,6 @@ namespace YashfeenMedical.BLL.IServices
         Task<TPaginationQueryModel<InvoiceDto>> GetPaitentInvoices(PaginationQuery queryModel, int paitentId);
         Task<TPaginationQueryModel<MedicalFileDto>> GetPaitentMedicalFiles(PaginationQuery queryModel, int paitentId);
         Task<string> TogglePatientActivitiy(int patientId);
+        Task<bool> UploadPatientPhoto(int patientId, IFormFile ProfilePhoto);
     };
 }

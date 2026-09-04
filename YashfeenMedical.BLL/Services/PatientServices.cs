@@ -1,4 +1,5 @@
 using MapsterMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Storage;
 using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Invoices;
@@ -11,6 +12,7 @@ using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
 using YashfeenMedical.Infrastructure.Exceptions;
+using YashfeenMedical.Infrastructure.FileStorage;
 using YashfeenMedical.Infrastructure.UsersManagment;
 
 namespace YashfeenMedical.BLL.Services
@@ -24,12 +26,14 @@ namespace YashfeenMedical.BLL.Services
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IMedicalFileRepository _medicalFileRepository;
         private readonly IUserManagmentServices _userManagmentServices;
+        private readonly IFileStorageService _fileStorageService;
         private readonly IMapper _mapper;
 
         public PatientServices(IPatientRepository repository, IMapper mapper
             , IAppointmentRepository appointmentRepository, IMedicalRecordRepository medicalRecordRepository,
               IPrescriptionRepository prescriptionRepository, IInvoiceRepository invoiceRepository,
-              IMedicalFileRepository medicalFileRepository, IUserManagmentServices userManagmentServices) : base(repository, mapper)
+              IMedicalFileRepository medicalFileRepository, IUserManagmentServices userManagmentServices,
+              IFileStorageService fileStorageService) : base(repository, mapper)
         {
             _repository = repository;
             _appointmentRepository = appointmentRepository;
@@ -38,6 +42,7 @@ namespace YashfeenMedical.BLL.Services
             _invoiceRepository = invoiceRepository;
             _medicalFileRepository = medicalFileRepository;
             _userManagmentServices = userManagmentServices;
+            _fileStorageService = fileStorageService;
             _mapper = mapper;
         }
 
@@ -113,6 +118,45 @@ namespace YashfeenMedical.BLL.Services
                 await _userManagmentServices.UpdateUserAsync(user);
                 return "patient deactivated successfully";
             }
+        }
+
+        public async Task<bool> UploadPatientPhoto(int patientId, IFormFile ProfilePhoto)
+        {
+            var patient = await _repository.GetById(patientId);
+
+            string? profilePicturePath = null;
+            if (ProfilePhoto != null)
+            {
+                FileValidationRules.Validate(ProfilePhoto, "ProfilePhoto");
+
+                var (_, relativePath) = await _fileStorageService.SaveFileAsync(
+                    ProfilePhoto.OpenReadStream(),
+                    ProfilePhoto.FileName,
+                    subFolder: "patients/profile-pictures");
+
+                profilePicturePath = relativePath;
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(patient.ProfilePhotoUrl))
+                {
+                    _fileStorageService.DeleteFile(patient.ProfilePhotoUrl);
+                }
+
+                patient.ProfilePhotoUrl = profilePicturePath;
+                await _repository.Update(patient);
+
+                return true;
+            }
+            catch(Exception ex) {
+
+                if (profilePicturePath != null)
+                    _fileStorageService.DeleteFile(profilePicturePath);
+
+                throw new Exception("Error occurred while uploading patient photo.", ex);
+            }
+
         }
     }
 }

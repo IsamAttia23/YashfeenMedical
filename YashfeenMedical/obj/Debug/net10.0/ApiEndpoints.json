@@ -457,6 +457,27 @@
   },
   {
     "ContainingType": "YashfeenMedical.API.Controllers.PatientsController",
+    "Method": "UploadPatientPhoto",
+    "RelativePath": "api/Patients/{id}/Photo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "profilePhoto",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "YashfeenMedical.API.Controllers.PatientsController",
     "Method": "GetPatientPrescriptions",
     "RelativePath": "api/Patients/{id}/prescriptions",
     "HttpMethod": "GET",

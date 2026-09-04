@@ -65,5 +65,12 @@ namespace YashfeenMedical.API.Controllers
             var result = await _patientServices.TogglePatientActivitiy(id);
             return Ok(result);
         }
+
+        [HttpPost("{id}/Photo")]
+        public async Task<IActionResult> UploadPatientPhoto(int id, IFormFile profilePhoto)
+        {
+            var result = await _patientServices.UploadPatientPhoto(id, profilePhoto);
+            return Ok("Patient photo uploaded successfully.");
+        }
     }
 }
