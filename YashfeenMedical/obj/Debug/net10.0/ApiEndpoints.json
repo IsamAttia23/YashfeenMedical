@@ -214,23 +214,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "YashfeenMedical.API.Controllers.BaseController\u00605[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[YashfeenMedical.BLL.IServices.IPatientServices, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientCreationDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientUpdateDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-    "Method": "Details",
-    "RelativePath": "api/Patients/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "YashfeenMedical.API.Controllers.BaseController\u00605[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[YashfeenMedical.BLL.IServices.IPatientServices, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientCreationDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientUpdateDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "ContainingType": "YashfeenMedical.API.Controllers.PatientsController",
     "Method": "Edit",
     "RelativePath": "api/Patients/{id}",
     "HttpMethod": "PUT",
@@ -243,8 +227,99 @@
         "IsRequired": true
       },
       {
-        "Name": "updateDto",
-        "Type": "YashfeenMedical.BLL.DTOs.Patients.PatientUpdateDto",
+        "Name": "Id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "FullName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "NationalId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "DateOfBirth",
+        "Type": "System.DateOnly",
+        "IsRequired": false
+      },
+      {
+        "Name": "BloodType",
+        "Type": "YashfeenMedical.DAL.Enums.BloodType",
+        "IsRequired": false
+      },
+      {
+        "Name": "Address",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "EmergencyContact",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "EmergencyPhone",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Allergies",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ChronicDiseases",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ProfilePhotoUrl",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ProfilePhoto",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "Gender",
+        "Type": "YashfeenMedical.DAL.Enums.Gender",
+        "IsRequired": false
+      },
+      {
+        "Name": "UserName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Email",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "PhoneNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "YashfeenMedical.API.Controllers.BaseController\u00605[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[YashfeenMedical.BLL.IServices.IPatientServices, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientCreationDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[YashfeenMedical.BLL.DTOs.Patients.PatientUpdateDto, YashfeenMedical.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+    "Method": "Details",
+    "RelativePath": "api/Patients/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

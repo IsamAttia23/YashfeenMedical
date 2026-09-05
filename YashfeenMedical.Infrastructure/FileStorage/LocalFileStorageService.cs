@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace YashfeenMedical.Infrastructure.FileStorage;
@@ -70,5 +71,20 @@ public class LocalFileStorageService : IFileStorageService
         var payload = $"{relativePath}:{expiryUnixSeconds}";
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(payload));
         return Convert.ToBase64String(hash).Replace("+", "-").Replace("/", "_").TrimEnd('=');
+    }
+
+    public async Task<string> SaveProfilePhoto(IFormFile profilePhoto)
+    {
+        string? profilePicturePath = null;
+        FileValidationRules.Validate(profilePhoto, "ProfilePhoto");
+
+        var (_, relativePath) = await SaveFileAsync(
+            profilePhoto.OpenReadStream(),
+            profilePhoto.FileName,
+            subFolder: "patients/profile-pictures");
+
+        profilePicturePath = relativePath;
+
+        return profilePicturePath;
     }
 }

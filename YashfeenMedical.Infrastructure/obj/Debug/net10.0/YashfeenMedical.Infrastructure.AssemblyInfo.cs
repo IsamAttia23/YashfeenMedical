@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YashfeenMedical.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6f7cfc6fe0a5d2c02c814fff891f293bdf85012a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d709e4511a035b118aa355a5dc2a730913713cd9")]
 [assembly: System.Reflection.AssemblyProductAttribute("YashfeenMedical.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YashfeenMedical.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

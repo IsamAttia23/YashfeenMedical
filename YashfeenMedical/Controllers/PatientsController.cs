@@ -72,5 +72,12 @@ namespace YashfeenMedical.API.Controllers
             var result = await _patientServices.UploadPatientPhoto(id, profilePhoto);
             return Ok("Patient photo uploaded successfully.");
         }
+
+
+        [HttpPut("{id}")]
+        public override Task<IActionResult> Edit(int id, [FromForm] PatientUpdateDto updateDto)
+        {
+            return base.Edit(id, updateDto);
+        }
     }
 }

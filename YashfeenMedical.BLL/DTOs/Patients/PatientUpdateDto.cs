@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System;
 using System.ComponentModel.DataAnnotations;
 using YashfeenMedical.BLL.DTOs.Users;
@@ -6,7 +7,7 @@ using YashfeenMedical.DAL.Shared.Entities;
 
 namespace YashfeenMedical.BLL.DTOs.Patients
 {
-    public class PatientUpdateDto : TIdType<int>
+    public class PatientUpdateDto : UserUpdateDto, TIdType<int>
     {
         [Required]
         public int Id { get; set; }
@@ -28,10 +29,9 @@ namespace YashfeenMedical.BLL.DTOs.Patients
         public string? Allergies { get; set; }
         public string? ChronicDiseases { get; set; }
         public string? ProfilePhotoUrl { get; set; }
+        public IFormFile? ProfilePhoto { get; set; }
 
         [Required]
         public Gender Gender { get; set; }
-
-        public UserUpdateDto UserUpdateDto { get; set; }
     }
 }

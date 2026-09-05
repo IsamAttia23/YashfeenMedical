@@ -737,27 +737,6 @@
       }
     },
     "/api/Patients/{id}": {
-      "get": {
-        "tags": [
-          "Patients"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
       "put": {
         "tags": [
           "Patients"
@@ -775,23 +754,150 @@
         ],
         "requestBody": {
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/PatientUpdateDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatientUpdateDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PatientUpdateDto"
+                "required": [
+                  "DateOfBirth",
+                  "Email",
+                  "FullName",
+                  "Gender",
+                  "Id",
+                  "NationalId",
+                  "UserName"
+                ],
+                "type": "object",
+                "properties": {
+                  "Id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "FullName": {
+                    "type": "string"
+                  },
+                  "NationalId": {
+                    "type": "string"
+                  },
+                  "DateOfBirth": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "BloodType": {
+                    "$ref": "#/components/schemas/BloodType"
+                  },
+                  "Address": {
+                    "type": "string"
+                  },
+                  "EmergencyContact": {
+                    "type": "string"
+                  },
+                  "EmergencyPhone": {
+                    "type": "string"
+                  },
+                  "Allergies": {
+                    "type": "string"
+                  },
+                  "ChronicDiseases": {
+                    "type": "string"
+                  },
+                  "ProfilePhotoUrl": {
+                    "type": "string"
+                  },
+                  "ProfilePhoto": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "Gender": {
+                    "$ref": "#/components/schemas/Gender"
+                  },
+                  "UserName": {
+                    "maxLength": 50,
+                    "minLength": 0,
+                    "type": "string"
+                  },
+                  "Email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "PhoneNumber": {
+                    "type": "string",
+                    "format": "tel"
+                  }
+                }
+              },
+              "encoding": {
+                "Id": {
+                  "style": "form"
+                },
+                "FullName": {
+                  "style": "form"
+                },
+                "NationalId": {
+                  "style": "form"
+                },
+                "DateOfBirth": {
+                  "style": "form"
+                },
+                "BloodType": {
+                  "style": "form"
+                },
+                "Address": {
+                  "style": "form"
+                },
+                "EmergencyContact": {
+                  "style": "form"
+                },
+                "EmergencyPhone": {
+                  "style": "form"
+                },
+                "Allergies": {
+                  "style": "form"
+                },
+                "ChronicDiseases": {
+                  "style": "form"
+                },
+                "ProfilePhotoUrl": {
+                  "style": "form"
+                },
+                "ProfilePhoto": {
+                  "style": "form"
+                },
+                "Gender": {
+                  "style": "form"
+                },
+                "UserName": {
+                  "style": "form"
+                },
+                "Email": {
+                  "style": "form"
+                },
+                "PhoneNumber": {
+                  "style": "form"
+                }
               }
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Patients"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -907,68 +1013,6 @@
         },
         "additionalProperties": false
       },
-      "PatientUpdateDto": {
-        "required": [
-          "dateOfBirth",
-          "fullName",
-          "gender",
-          "id",
-          "nationalId"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "fullName": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "nationalId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "format": "date"
-          },
-          "bloodType": {
-            "$ref": "#/components/schemas/BloodType"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "emergencyContact": {
-            "type": "string",
-            "nullable": true
-          },
-          "emergencyPhone": {
-            "type": "string",
-            "nullable": true
-          },
-          "allergies": {
-            "type": "string",
-            "nullable": true
-          },
-          "chronicDiseases": {
-            "type": "string",
-            "nullable": true
-          },
-          "profilePhotoUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "gender": {
-            "$ref": "#/components/schemas/Gender"
-          },
-          "userUpdateDto": {
-            "$ref": "#/components/schemas/UserUpdateDto"
-          }
-        },
-        "additionalProperties": false
-      },
       "SortDirection": {
         "enum": [
           0,
@@ -976,31 +1020,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "UserUpdateDto": {
-        "required": [
-          "email",
-          "userName"
-        ],
-        "type": "object",
-        "properties": {
-          "userName": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
-          },
-          "email": {
-            "minLength": 1,
-            "type": "string",
-            "format": "email"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "format": "tel",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       }
     }
   },

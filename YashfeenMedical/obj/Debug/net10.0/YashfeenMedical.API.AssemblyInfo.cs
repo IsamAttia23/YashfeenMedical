@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YashfeenMedical.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8dc53f7f2d11430cc6f214fcc24b67880df7144")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d709e4511a035b118aa355a5dc2a730913713cd9")]
 [assembly: System.Reflection.AssemblyProductAttribute("YashfeenMedical.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YashfeenMedical.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

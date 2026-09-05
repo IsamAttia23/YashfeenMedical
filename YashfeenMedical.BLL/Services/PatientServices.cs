@@ -1,5 +1,6 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Invoices;
@@ -125,16 +126,10 @@ namespace YashfeenMedical.BLL.Services
             var patient = await _repository.GetById(patientId);
 
             string? profilePicturePath = null;
+
             if (ProfilePhoto != null)
             {
-                FileValidationRules.Validate(ProfilePhoto, "ProfilePhoto");
-
-                var (_, relativePath) = await _fileStorageService.SaveFileAsync(
-                    ProfilePhoto.OpenReadStream(),
-                    ProfilePhoto.FileName,
-                    subFolder: "patients/profile-pictures");
-
-                profilePicturePath = relativePath;
+                profilePicturePath = await _fileStorageService.SaveProfilePhoto(ProfilePhoto);
             }
 
             try
@@ -149,7 +144,8 @@ namespace YashfeenMedical.BLL.Services
 
                 return true;
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
 
                 if (profilePicturePath != null)
                     _fileStorageService.DeleteFile(profilePicturePath);
@@ -158,5 +154,95 @@ namespace YashfeenMedical.BLL.Services
             }
 
         }
+
+        public async override Task<PatientDto> Update(int id, PatientUpdateDto updateDto)
+        {
+            var patient = await _repository.GetById(id);
+
+            if (patient == null)
+                throw new NotFoundException("The request entity dosen't exits");
+
+            string? profilePicturePath = null;
+
+            if (updateDto.ProfilePhoto != null)
+            {
+                profilePicturePath = await _fileStorageService.SaveProfilePhoto(updateDto.ProfilePhoto);
+                updateDto.ProfilePhotoUrl = profilePicturePath;
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(patient.ProfilePhotoUrl))
+                {
+                    _fileStorageService.DeleteFile(patient.ProfilePhotoUrl);
+                }
+
+                var mappedEntity = _mapper.Map(updateDto, patient);
+                var user = await _userManagmentServices.FindUserAsync(mappedEntity.UserId);
+
+                await SetUserName(user, updateDto.UserName);
+                await SetEmail(user, updateDto.Email);
+                await SetPhoneNumber(user, updateDto.PhoneNumber);
+
+                mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
+
+                await _repository.Update(mappedEntity);
+                await _repository.SaveChanges();
+
+                var result = _mapper.Map<PatientDto>(mappedEntity);
+
+                if (profilePicturePath != null)
+                    result.ProfilePhotoUrl = _fileStorageService.GenerateSignedUrl(profilePicturePath, TimeSpan.FromHours(1));
+               
+                return result;
+            }
+            catch (Exception ex)
+            {
+
+                if (profilePicturePath != null)
+                    _fileStorageService.DeleteFile(profilePicturePath);
+
+                throw new Exception("Error occurred while saving the patient.", ex);
+            }
+
+        }
+
+        private async Task SetUserName(ApplicationUser user,string userName)
+        {
+            if (!string.IsNullOrWhiteSpace(userName) && userName != user.UserName)
+            {
+                var nameExists = await _userManagmentServices.FindUserByNameAsync(userName);
+                if (nameExists != null && nameExists.Id != user.Id)
+                    throw new ConflictException("this username is already in use");
+
+                var nameResult = await _userManagmentServices.SetUserNameAsync(user, userName);
+                if (!nameResult.Succeeded)
+                    throw new BadRequestException(string.Join(", ", nameResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        private async Task SetPhoneNumber(ApplicationUser user, string phoneNumber)
+        {
+            if (!string.IsNullOrWhiteSpace(phoneNumber) && phoneNumber != user.PhoneNumber)
+            {
+                var phoneResult = await _userManagmentServices.SetPhoneNumberAsync(user, phoneNumber);
+                if (!phoneResult.Succeeded)
+                    throw new BadRequestException(string.Join(", ", phoneResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        private async Task SetEmail(ApplicationUser user, string email)
+        {
+            if (!string.IsNullOrWhiteSpace(email) && email != user.Email)
+            {
+                var emailExists = await _userManagmentServices.FindUserByEmailAsync(email);
+                if (emailExists != null && emailExists.Id != user.Id)
+                    throw new ConflictException("this email is already in use");
+                var emailResult = await _userManagmentServices.SetUserEmailAsync(user, email);
+                if (!emailResult.Succeeded)
+                    throw new BadRequestException(string.Join(", ", emailResult.Errors.Select(e => e.Description)));
+            }
+        }
+
     }
 }

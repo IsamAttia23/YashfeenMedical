@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
 using YashfeenMedical.DAL.Models;
+using YashfeenMedical.Infrastructure.Exceptions;
 
 namespace YashfeenMedical.Infrastructure.UsersManagment
 {
@@ -19,7 +20,7 @@ namespace YashfeenMedical.Infrastructure.UsersManagment
 
         public async Task<IdentityResult> AddUserToRole(ApplicationUser user, string roles)
         {
-          return await _userManager.AddToRoleAsync(user, roles);
+            return await _userManager.AddToRoleAsync(user, roles);
         }
 
         public async Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string currentPassword, string newPassword)
@@ -79,6 +80,24 @@ namespace YashfeenMedical.Infrastructure.UsersManagment
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
             var result = await _userManager.Users.ToListAsync();
+            return result;
+        }
+
+        public async Task<IdentityResult> SetPhoneNumberAsync(ApplicationUser user, string phoneNumber)
+        {
+            var phoneResult = await _userManager.SetPhoneNumberAsync(user, phoneNumber);
+            return phoneResult;
+        }
+
+        public Task<IdentityResult> SetUserEmailAsync(ApplicationUser user, string email)
+        {
+            var result = _userManager.SetEmailAsync(user, email);
+            return result;
+        }
+
+        public Task<IdentityResult> SetUserNameAsync(ApplicationUser user, string userName)
+        {
+            var result = _userManager.SetUserNameAsync(user, userName);
             return result;
         }
 

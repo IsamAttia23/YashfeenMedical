@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace YashfeenMedical.Infrastructure.FileStorage;
 
 public interface IFileStorageService
@@ -11,4 +13,6 @@ public interface IFileStorageService
     bool ValidateSignedUrl(string relativePath, string signature, long expiryUnixSeconds);
 
     void DeleteFile(string relativePath);
+
+    Task<string> SaveProfilePhoto(IFormFile profilePhoto);
 }
