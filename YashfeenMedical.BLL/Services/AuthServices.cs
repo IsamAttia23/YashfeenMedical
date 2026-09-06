@@ -79,6 +79,12 @@ namespace YashfeenMedical.BLL.Services
                 throw new NotFoundException("incorrect user or password");
             }
 
+            if(user.IsActive == false)
+            {
+                throw new ForbiddenException("this account is not active");
+            }
+
+
             var rolesList = await _userManagmentServices.GetUserRoles(user);
             var jwtSecurityToken = await _jwtService.GenerateAccessToken(user);
 

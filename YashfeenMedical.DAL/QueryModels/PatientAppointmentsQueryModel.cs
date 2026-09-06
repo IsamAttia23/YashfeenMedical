@@ -9,9 +9,9 @@ namespace YashfeenMedical.DAL.QueryModels
     {
         public AppointmentStatus? Status { get; set; }
 
-        public DateOnly? AgeFrom { get; set; }
+        public DateTimeOffset? DateFrom { get; set; }
 
-        public DateOnly? AgeTo { get; set; }
+        public DateTimeOffset? DateTo { get; set; }
 
         public int? DoctorId { get; set; }
 

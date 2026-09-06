@@ -47,18 +47,10 @@ namespace YashfeenMedical.DAL.Repositories
                     a.Type == queryModel.Type.Value);
             }
 
-            // Patient Date Of Birth From
-            if (queryModel.AgeFrom.HasValue)
+            if (queryModel.DateFrom.HasValue)
             {
                 patientAppointments = patientAppointments.Where(a =>
-                    a.Patient.DateOfBirth >= queryModel.AgeFrom.Value);
-            }
-
-            // Patient Date Of Birth To
-            if (queryModel.AgeTo.HasValue)
-            {
-                patientAppointments = patientAppointments.Where(a =>
-                    a.Patient.DateOfBirth <= queryModel.AgeTo.Value);
+                    a.AppointmentDate <= queryModel.DateFrom.Value);
             }
 
             // Search

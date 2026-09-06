@@ -21,7 +21,7 @@ namespace YashfeenMedical.DAL.Repositories
             _context = context;
         }
 
-        public IQueryable<Patient> GetFilteredPatientsAsync(PatientQueryModel queryModel)
+        public async Task<IQueryable<Patient>> GetFilteredPatientsAsync(PatientQueryModel queryModel)
         {
             var patients = SelectQuery;
 
@@ -43,6 +43,13 @@ namespace YashfeenMedical.DAL.Repositories
             {
                 patients = patients.Where(p =>
                     p.NationalId.Contains(queryModel.NationalId));
+            }
+
+            if (queryModel.IsActive.HasValue)
+            {
+                patients = queryModel.IsActive == true
+                ? patients.Where(p => p.ApplicationUser.IsActive == true)
+                : patients.Where(p => p.ApplicationUser.IsActive == false);
             }
 
             if (queryModel.BloodType.HasValue)
@@ -72,15 +79,15 @@ namespace YashfeenMedical.DAL.Repositories
             // Sorting
             patients = queryModel.SortBy?.ToLower() switch
             {
-                "fullname" => queryModel.SortDirection == SortDirection.Ascending
+                "fullname" => queryModel.SortDirection == SortDirection.Descending
                     ? patients.OrderByDescending(p => p.FullName)
                     : patients.OrderBy(p => p.FullName),
 
-                "dateofbirth" => queryModel.SortDirection == SortDirection.Ascending
+                "dateofbirth" => queryModel.SortDirection == SortDirection.Descending
                     ? patients.OrderByDescending(p => p.DateOfBirth)
                     : patients.OrderBy(p => p.DateOfBirth),
 
-                "nationalid" => queryModel.SortDirection == SortDirection.Ascending
+                "nationalid" => queryModel.SortDirection == SortDirection.Descending
                     ? patients.OrderByDescending(p => p.NationalId)
                     : patients.OrderBy(p => p.NationalId),
 
@@ -91,15 +98,11 @@ namespace YashfeenMedical.DAL.Repositories
 
         public async Task<TPaginationQueryModel<Patient>> GetFilteredPatientsWithPaginationAsync(PatientQueryModel queryModel)
         {
-            var ordersList = GetFilteredPatientsAsync(queryModel)
-               .Skip((queryModel.PageNumber - 1) * queryModel.PageSize)
-               .Take(queryModel.PageSize);
+            var patients = await GetFilteredPatientsAsync(queryModel);
 
-            var paggedOrders = GetPaggedList(ordersList, queryModel);
+            var paggedOrders = await GetPaggedList(patients, queryModel);
 
-
-
-            return await paggedOrders;
+            return paggedOrders;
         }
 
     }

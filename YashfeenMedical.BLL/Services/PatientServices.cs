@@ -28,13 +28,14 @@ namespace YashfeenMedical.BLL.Services
         private readonly IMedicalFileRepository _medicalFileRepository;
         private readonly IUserManagmentServices _userManagmentServices;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public PatientServices(IPatientRepository repository, IMapper mapper
             , IAppointmentRepository appointmentRepository, IMedicalRecordRepository medicalRecordRepository,
               IPrescriptionRepository prescriptionRepository, IInvoiceRepository invoiceRepository,
               IMedicalFileRepository medicalFileRepository, IUserManagmentServices userManagmentServices,
-              IFileStorageService fileStorageService) : base(repository, mapper)
+              IFileStorageService fileStorageService, IUnitOfWork unitOfWork) : base(repository, mapper)
         {
             _repository = repository;
             _appointmentRepository = appointmentRepository;
@@ -44,6 +45,7 @@ namespace YashfeenMedical.BLL.Services
             _medicalFileRepository = medicalFileRepository;
             _userManagmentServices = userManagmentServices;
             _fileStorageService = fileStorageService;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -162,22 +164,22 @@ namespace YashfeenMedical.BLL.Services
             if (patient == null)
                 throw new NotFoundException("The request entity dosen't exits");
 
-            string? profilePicturePath = null;
+            var oldProfilePicturePath = patient.ProfilePhotoUrl;
+            string? newPofilePicturePath = null;
 
-            if (updateDto.ProfilePhoto != null)
-            {
-                profilePicturePath = await _fileStorageService.SaveProfilePhoto(updateDto.ProfilePhoto);
-                updateDto.ProfilePhotoUrl = profilePicturePath;
-            }
+            await _unitOfWork.BeginTransactionAsync();
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(patient.ProfilePhotoUrl))
+                if (updateDto.ProfilePhoto != null)
                 {
-                    _fileStorageService.DeleteFile(patient.ProfilePhotoUrl);
+                    newPofilePicturePath = await _fileStorageService.SaveProfilePhoto(updateDto.ProfilePhoto);
                 }
 
                 var mappedEntity = _mapper.Map(updateDto, patient);
+
+                patient.ProfilePhotoUrl = newPofilePicturePath ?? oldProfilePicturePath;
+
                 var user = await _userManagmentServices.FindUserAsync(mappedEntity.UserId);
 
                 await SetUserName(user, updateDto.UserName);
@@ -186,28 +188,68 @@ namespace YashfeenMedical.BLL.Services
 
                 mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
 
-                await _repository.Update(mappedEntity);
-                await _repository.SaveChanges();
+                await _unitOfWork.Patients.Update(mappedEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
 
                 var result = _mapper.Map<PatientDto>(mappedEntity);
 
-                if (profilePicturePath != null)
-                    result.ProfilePhotoUrl = _fileStorageService.GenerateSignedUrl(profilePicturePath, TimeSpan.FromHours(1));
-               
+                if (string.IsNullOrWhiteSpace(oldProfilePicturePath))
+                {
+                    _fileStorageService.DeleteFile(oldProfilePicturePath);
+                }
+
+                if (newPofilePicturePath != null)
+                    result.ProfilePhotoUrl = _fileStorageService.GenerateSignedUrl(newPofilePicturePath, TimeSpan.FromHours(1));
+
                 return result;
             }
+
+            catch (AppException)
+            {
+                throw;
+            }
+
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync();
 
-                if (profilePicturePath != null)
-                    _fileStorageService.DeleteFile(profilePicturePath);
+                if (newPofilePicturePath != null)
+                    _fileStorageService.DeleteFile(newPofilePicturePath);
 
                 throw new Exception("Error occurred while saving the patient.", ex);
             }
 
         }
 
-        private async Task SetUserName(ApplicationUser user,string userName)
+        public async override Task Delete(int id)
+        {
+            var patient = await _repository.GetById(id);
+
+            if (patient == null)
+                throw new NotFoundException("The request entity dosen't exits");
+
+            var user = await _userManagmentServices.FindUserAsync(patient.UserId);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                user.DeletedOn = DateTimeOffset.UtcNow;
+                await _userManagmentServices.UpdateUserAsync(user);
+                await _repository.Delete(id);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new Exception("Error occurred while deleting the patient.", ex);
+            }
+
+        }
+
+        private async Task SetUserName(ApplicationUser user, string userName)
         {
             if (!string.IsNullOrWhiteSpace(userName) && userName != user.UserName)
             {
@@ -239,6 +281,7 @@ namespace YashfeenMedical.BLL.Services
                 if (emailExists != null && emailExists.Id != user.Id)
                     throw new ConflictException("this email is already in use");
                 var emailResult = await _userManagmentServices.SetUserEmailAsync(user, email);
+
                 if (!emailResult.Succeeded)
                     throw new BadRequestException(string.Join(", ", emailResult.Errors.Select(e => e.Description)));
             }

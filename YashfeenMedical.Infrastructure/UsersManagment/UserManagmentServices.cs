@@ -13,6 +13,8 @@ namespace YashfeenMedical.Infrastructure.UsersManagment
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
+        protected IQueryable<ApplicationUser> Users => _userManager.Users.Where(u => u.DeletedOn == null);
+
         public UserManagmentServices(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
@@ -79,7 +81,7 @@ namespace YashfeenMedical.Infrastructure.UsersManagment
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync()
         {
-            var result = await _userManager.Users.ToListAsync();
+            var result = Users;
             return result;
         }
 
