@@ -100,14 +100,5 @@ namespace YashfeenMedical.DAL.Repositories
             return patients;
         }
 
-        public async Task<TPaginationQueryModel<Patient>> GetFilteredPatientsWithPaginationAsync(PatientQueryModel queryModel)
-        {
-            var patients = await GetFilteredPatientsAsync(queryModel);
-
-            var paggedOrders = await GetPaggedList(patients, queryModel);
-
-            return paggedOrders;
-        }
-
     }
 }

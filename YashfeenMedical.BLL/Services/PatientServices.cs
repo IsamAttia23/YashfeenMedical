@@ -51,7 +51,8 @@ namespace YashfeenMedical.BLL.Services
 
         public async Task<TPaginationQueryModel<PatientDto>> GetFilterdPatients(PatientQueryModel queryModel)
         {
-            var paggedPatients = await _repository.GetFilteredPatientsWithPaginationAsync(queryModel);
+            var patients = await _repository.GetFilteredPatientsAsync(queryModel);
+            var paggedPatients = await _repository.GetPaggedList(patients,queryModel);
 
             var result = _mapper.Map<TPaginationQueryModel<PatientDto>>(paggedPatients);
 
