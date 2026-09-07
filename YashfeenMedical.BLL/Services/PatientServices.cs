@@ -69,8 +69,8 @@ namespace YashfeenMedical.BLL.Services
 
         public async Task<TPaginationQueryModel<AppointmentDto>> GetPaitentAppointments(PatientAppointmentsQueryModel queryModel, int paitentId)
         {
-            var patientAppointments = await _appointmentRepository.GetPatientAppointmentsAsync(paitentId);
-            var filterdAppointments = await _appointmentRepository.GetFilterdAppointmentsAsync(queryModel, patientAppointments);
+            var patientAppointments = _appointmentRepository.GetPatientAppointmentsAsync(paitentId);
+            var filterdAppointments = _appointmentRepository.GetFilterdAppointmentsAsync(queryModel, patientAppointments);
             var paggedList = await _appointmentRepository.GetPaggedList(filterdAppointments, queryModel);
             var result = _mapper.Map<TPaginationQueryModel<AppointmentDto>>(paggedList);
 
@@ -131,7 +131,7 @@ namespace YashfeenMedical.BLL.Services
 
             if (ProfilePhoto != null)
             {
-                profilePicturePath = await _fileStorageService.SaveProfilePhoto(ProfilePhoto);
+                profilePicturePath = await SetProfilePhoto(patient, ProfilePhoto);
             }
 
             try
@@ -141,7 +141,6 @@ namespace YashfeenMedical.BLL.Services
                     _fileStorageService.DeleteFile(patient.ProfilePhotoUrl);
                 }
 
-                patient.ProfilePhotoUrl = profilePicturePath;
                 await _repository.Update(patient);
 
                 return true;
@@ -173,12 +172,10 @@ namespace YashfeenMedical.BLL.Services
             {
                 if (updateDto.ProfilePhoto != null)
                 {
-                    newPofilePicturePath = await _fileStorageService.SaveProfilePhoto(updateDto.ProfilePhoto);
+                    newPofilePicturePath = await SetProfilePhoto(patient, updateDto.ProfilePhoto);
                 }
 
                 var mappedEntity = _mapper.Map(updateDto, patient);
-
-                patient.ProfilePhotoUrl = newPofilePicturePath ?? oldProfilePicturePath;
 
                 var user = await _userManagmentServices.FindUserAsync(mappedEntity.UserId);
 
@@ -195,7 +192,7 @@ namespace YashfeenMedical.BLL.Services
 
                 var result = _mapper.Map<PatientDto>(mappedEntity);
 
-                if (string.IsNullOrWhiteSpace(oldProfilePicturePath))
+                if (newPofilePicturePath != null && !string.IsNullOrWhiteSpace(oldProfilePicturePath))
                 {
                     _fileStorageService.DeleteFile(oldProfilePicturePath);
                 }
@@ -235,6 +232,7 @@ namespace YashfeenMedical.BLL.Services
             try
             {
                 user.DeletedOn = DateTimeOffset.UtcNow;
+                user.IsActive = false;
                 await _userManagmentServices.UpdateUserAsync(user);
                 await _repository.Delete(id);
 
@@ -285,6 +283,19 @@ namespace YashfeenMedical.BLL.Services
                 if (!emailResult.Succeeded)
                     throw new BadRequestException(string.Join(", ", emailResult.Errors.Select(e => e.Description)));
             }
+        }
+
+        private async Task<string?> SetProfilePhoto(Patient patient, IFormFile profilePhoto)
+        {
+            var oldPhotoPath = patient.ProfilePhotoUrl;
+            string? newPhotoPath = null;
+
+            if (profilePhoto != null)
+                newPhotoPath = await _fileStorageService.SaveProfilePhoto(profilePhoto);
+
+            patient.ProfilePhotoUrl = newPhotoPath ?? oldPhotoPath;
+
+            return newPhotoPath;
         }
 
     }

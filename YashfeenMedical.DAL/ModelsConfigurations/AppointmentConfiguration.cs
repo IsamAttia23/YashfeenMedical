@@ -25,7 +25,7 @@ namespace YashfeenMedical.DAL.ModelsConfigurations
             builder.Property(a => a.Type).IsRequired().HasMaxLength(50);
             builder.Property(a => a.ReasonForVisit).IsRequired().HasMaxLength(500);
 
-            builder.HasIndex(a => new { a.DoctorId, a.AppointmentDate, a.StartTime });
+            builder.HasIndex(a => new { a.DoctorId, a.AppointmentDate, a.StartTime }).IsUnique();
 
         }
     }

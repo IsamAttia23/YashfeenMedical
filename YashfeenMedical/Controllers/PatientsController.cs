@@ -73,7 +73,6 @@ namespace YashfeenMedical.API.Controllers
             return Ok("Patient photo uploaded successfully.");
         }
 
-
         [HttpPut("{id}")]
         public override Task<IActionResult> Edit(int id, [FromForm] PatientUpdateDto updateDto)
         {

@@ -18,13 +18,13 @@ namespace YashfeenMedical.DAL.Repositories
             _context = context;
         }
 
-        public async Task<IQueryable<Appointment>> GetPatientAppointmentsAsync(int patientId)
+        public IQueryable<Appointment> GetPatientAppointmentsAsync(int patientId)
         {
-            var result = SelectQuery.Where(a => a.PatientId == patientId);
-            return result;
+            var result =  SelectQuery.Where(a => a.PatientId == patientId);
+            return  result;
         }
 
-        public async Task<IQueryable<Appointment>> GetFilterdAppointmentsAsync(PatientAppointmentsQueryModel queryModel,
+        public IQueryable<Appointment> GetFilterdAppointmentsAsync(PatientAppointmentsQueryModel queryModel,
             IQueryable<Appointment> patientAppointments)
         {
             if (queryModel.Status.HasValue)

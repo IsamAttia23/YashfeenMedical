@@ -19,8 +19,8 @@ namespace YashfeenMedical.DAL.QueryModels
 
         public Gender? Gender { get; set; }
 
-        public DateOnly? AgeFrom { get; set; }
+        public int? AgeFrom { get; set; }
 
-        public DateOnly? AgeTo { get; set; }
+        public int? AgeTo { get; set; }
     }
 }

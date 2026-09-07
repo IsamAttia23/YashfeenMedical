@@ -66,14 +66,18 @@ namespace YashfeenMedical.DAL.Repositories
 
             if (queryModel.AgeFrom.HasValue)
             {
+                var maxBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-queryModel.AgeFrom.Value));
+
                 patients = patients.Where(p =>
-                    p.DateOfBirth >= queryModel.AgeFrom.Value);
+                p.DateOfBirth >= maxBirthDate);
             }
 
             if (queryModel.AgeTo.HasValue)
             {
+                var minBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-(queryModel.AgeFrom.Value+1)));
+
                 patients = patients.Where(p =>
-                    p.DateOfBirth <= queryModel.AgeTo.Value);
+                p.DateOfBirth <= minBirthDate);
             }
 
             // Sorting
