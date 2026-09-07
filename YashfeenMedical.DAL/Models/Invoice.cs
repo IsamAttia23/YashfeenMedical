@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.Shared.Entities;
 
@@ -41,4 +42,7 @@ public class Invoice : TEntity<int>
 
 
     public ICollection<InvoiceItem> Items { get; set; } = new List<InvoiceItem>();
+
+    [Timestamp]
+    public byte[] RowVerison { get; set; }
 }

@@ -33,5 +33,8 @@ namespace YashfeenMedical.DAL.Models
         public IList<Appointment> Appointments { get; set; }
         public IList<DoctorSpecialty> DoctorSpecialties { get; set; }
 
+        [Timestamp]
+        public byte[] RowVerison { get; set; }
+
     }
 }
