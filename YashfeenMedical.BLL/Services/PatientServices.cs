@@ -52,7 +52,7 @@ namespace YashfeenMedical.BLL.Services
         public async Task<TPaginationQueryModel<PatientDto>> GetFilterdPatients(PatientQueryModel queryModel)
         {
             var patients = await _repository.GetFilteredPatientsAsync(queryModel);
-            var paggedPatients = await _repository.GetPaggedList(patients,queryModel);
+            var paggedPatients = await _repository.GetPaggedList(patients, queryModel);
 
             var result = _mapper.Map<TPaginationQueryModel<PatientDto>>(paggedPatients);
 
@@ -126,26 +126,35 @@ namespace YashfeenMedical.BLL.Services
 
         public async Task<bool> UploadPatientPhoto(int patientId, IFormFile ProfilePhoto)
         {
-            var patient = await _repository.GetById(patientId);
+            var patient = await _repository.GetById(patientId)
+                ?? throw new NotFoundException("The request entity dosen't exits");
+
+            var oldPhotoPath = patient.ProfilePhotoUrl;
 
             string? profilePicturePath = null;
 
-            if (ProfilePhoto != null)
-            {
-                profilePicturePath = await SetProfilePhoto(patient, ProfilePhoto);
-            }
-
             try
             {
-                if (!string.IsNullOrWhiteSpace(patient.ProfilePhotoUrl))
+                if (ProfilePhoto != null)
                 {
-                    _fileStorageService.DeleteFile(patient.ProfilePhotoUrl);
+                    profilePicturePath = await SetProfilePhoto(patient, ProfilePhoto);
                 }
 
                 await _repository.Update(patient);
 
+                if (profilePicturePath != null && !string.IsNullOrWhiteSpace(oldPhotoPath))
+                {
+                    _fileStorageService.DeleteFile(oldPhotoPath);
+                }
+
                 return true;
             }
+
+            catch (AppException)
+            {
+                throw;
+            }
+
             catch (Exception ex)
             {
 
