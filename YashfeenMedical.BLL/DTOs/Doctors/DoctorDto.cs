@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using YashfeenMedical.BLL.DTOs.DoctorSchedules;
+using YashfeenMedical.BLL.DTOs.Specialties;
+using YashfeenMedical.BLL.DTOs.Users;
 using YashfeenMedical.DAL.Shared.Entities;
 
 namespace YashfeenMedical.BLL.DTOs.Doctors
 {
-    public class DoctorDto : TIdType<int>
+    public class DoctorDto : UserDto, TIdType<int>
     {
         public int Id { get; set; }
 
@@ -24,8 +27,6 @@ namespace YashfeenMedical.BLL.DTOs.Doctors
 
         public string? ProfilePhotoUrl { get; set; }
 
-        public IList<int>? ScheduleIds { get; set; }
-
-        public IList<int>? SpecialtyIds { get; set; }
+        public IList<SpecialtyDto>? DoctorSpecialties { get; set; }
     }
 }

@@ -17,12 +17,16 @@ namespace YashfeenMedical.BLL
         public static IServiceCollection AddBllServices(this IServiceCollection services, IConfiguration configuration)
         {
             TypeAdapterConfig.GlobalSettings.Scan(typeof(PatientMapper).Assembly);
+            TypeAdapterConfig.GlobalSettings.Scan(typeof(DoctorMapper).Assembly);
             services.AddMapster();
             services.AddDalServices(configuration);
             services.AddInfrastructureServices(configuration);
 
             services.AddScoped<IAuthServices,AuthServices>();
             services.AddScoped<IPatientServices, PatientServices>();
+            services.AddScoped<IDoctorServices, DoctorServices>();
+            services.AddScoped<ISpecialtyServices, SpecialtyServices>();
+
             return services;
         }
     }

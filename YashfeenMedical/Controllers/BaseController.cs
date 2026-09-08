@@ -41,14 +41,11 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpPost]
-        protected virtual async Task<IActionResult> Add([FromBody] TCreationDto creationDto)
+        protected virtual async Task<TDto> Add([FromBody] TCreationDto creationDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var entity = await _services.Add(creationDto);
 
-            return CreatedAtAction(nameof(Details), new { id = entity.Id }, entity);
+            return entity;
         }
 
         [HttpPut("{id}")]

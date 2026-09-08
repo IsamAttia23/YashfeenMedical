@@ -13,7 +13,8 @@ namespace YashfeenMedical.DAL.Repositories
 
         public override IQueryable<Doctor> SelectQuery => _context.Set<Doctor>()
             .Where(d => d.DeletedOn == null)
-            .Include(ds => ds.DoctorSpecialties);
+            .Include(ds => ds.DoctorSpecialties)
+            .Include(s => s.Schedules);
 
         public DoctorRepository(ApplicationDbContext context) : base(context)
         {
