@@ -73,7 +73,7 @@ public class LocalFileStorageService : IFileStorageService
         return Convert.ToBase64String(hash).Replace("+", "-").Replace("/", "_").TrimEnd('=');
     }
 
-    public async Task<string> SaveProfilePhoto(IFormFile profilePhoto)
+    public async Task<string> SaveProfilePhoto(IFormFile profilePhoto , string folderName)
     {
         string? profilePicturePath = null;
         FileValidationRules.Validate(profilePhoto, "ProfilePhoto");
@@ -81,7 +81,7 @@ public class LocalFileStorageService : IFileStorageService
         var (_, relativePath) = await SaveFileAsync(
             profilePhoto.OpenReadStream(),
             profilePhoto.FileName,
-            subFolder: "patients/profile-pictures");
+            subFolder: $"{folderName}/profile-pictures");
 
         profilePicturePath = relativePath;
 

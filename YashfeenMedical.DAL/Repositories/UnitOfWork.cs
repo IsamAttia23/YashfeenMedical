@@ -13,11 +13,14 @@ namespace YashfeenMedical.DAL.Repositories
         private IDbContextTransaction? _transaction;
 
         public IPatientRepository Patients { get; }
+        public IDoctorRepository Doctors { get; }
 
-        public UnitOfWork(ApplicationDbContext context, IPatientRepository patientRepository)
+        public UnitOfWork(ApplicationDbContext context, IPatientRepository patientRepository
+            , IDoctorRepository doctorRepository)
         {
             _context = context;
             Patients = patientRepository;
+            Doctors = doctorRepository;
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();

@@ -301,7 +301,7 @@ namespace YashfeenMedical.BLL.Services
             string? newPhotoPath = null;
 
             if (profilePhoto != null)
-                newPhotoPath = await _fileStorageService.SaveProfilePhoto(profilePhoto);
+                newPhotoPath = await _fileStorageService.SaveProfilePhoto(profilePhoto, "patients");
 
             patient.ProfilePhotoUrl = newPhotoPath ?? oldPhotoPath;
 

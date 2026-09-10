@@ -154,7 +154,7 @@ namespace YashfeenMedical.BLL.Services
             if (creationDto.ProfilePicture != null)
             {
 
-                profilePicturePath = await _fileStorageService.SaveProfilePhoto(creationDto.ProfilePicture);
+                profilePicturePath = await _fileStorageService.SaveProfilePhoto(creationDto.ProfilePicture, "patients");
             }
 
             await _unitOfWork.BeginTransactionAsync();

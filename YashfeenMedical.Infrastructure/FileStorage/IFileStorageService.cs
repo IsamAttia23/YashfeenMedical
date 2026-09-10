@@ -14,5 +14,5 @@ public interface IFileStorageService
 
     void DeleteFile(string relativePath);
 
-    Task<string> SaveProfilePhoto(IFormFile profilePhoto);
+    Task<string> SaveProfilePhoto(IFormFile profilePhoto, string folderName);
 }

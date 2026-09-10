@@ -5,7 +5,6 @@ namespace YashfeenMedical.DAL.IRepositories
 {
     public interface IDoctorRepository : IRepository<Doctor, int>
     {
-        Task<IQueryable<Doctor>> GetFilteredDoctorsAsync(DoctorQueryModel queryModel);
-        Task<TPaginationQueryModel<Doctor>> GetFilteredDoctorsWithPaginationAsync(DoctorQueryModel queryModel);
+        IQueryable<Doctor> GetFilteredDoctorsAsync(DoctorQueryModel queryModel);
     }
 }

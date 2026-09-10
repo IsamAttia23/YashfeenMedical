@@ -8,6 +8,8 @@ namespace YashfeenMedical.DAL.IRepositories
     public interface IUnitOfWork : IDisposable
     {
         IPatientRepository Patients { get; }
+        IDoctorRepository Doctors { get; }
+
         Task<int> SaveChangesAsync();
 
         Task BeginTransactionAsync();

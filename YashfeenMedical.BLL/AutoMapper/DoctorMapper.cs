@@ -15,7 +15,7 @@ namespace YashfeenMedical.BLL.AutoMapper
                 .Map(dest => dest.UserName, src => src.ApplicationUser.UserName)
                 .Map(dest => dest.Email, src => src.ApplicationUser.Email)
                 .Map(dest => dest.Phone, src => src.ApplicationUser.PhoneNumber)
-                .Map(dest=> dest.DoctorSpecialties, src=> src.DoctorSpecialties.Select(ds=> ds.Specialty.Name));
+                .Map(dest=> dest.Specialties, src=> src.DoctorSpecialties.Select(s=> s.Specialty.Name));
         }
     }
 }

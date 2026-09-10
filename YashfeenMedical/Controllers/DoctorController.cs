@@ -19,10 +19,20 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPatientsAsync([FromQuery] DoctorQueryModel doctorQuery)
+        public async Task<IActionResult> GetDoctorsAsync([FromQuery] DoctorQueryModel doctorQuery)
         {
             var patients = await _services.GetFilteredDoctorsWithPaginationAsync(doctorQuery);
             return Ok(patients);
+        }
+
+        [HttpPost]
+        public async  Task<IActionResult> CreateAsync(DoctorCreationDto creationDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await Add(creationDto);
+            return CreatedAtAction(nameof(Details), new { id = result.Id }, result);
         }
     }
 }

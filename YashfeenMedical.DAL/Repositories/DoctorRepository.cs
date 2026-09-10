@@ -12,16 +12,14 @@ namespace YashfeenMedical.DAL.Repositories
         private readonly ApplicationDbContext _context;
 
         public override IQueryable<Doctor> SelectQuery => _context.Set<Doctor>()
-            .Where(d => d.DeletedOn == null)
-            .Include(ds => ds.DoctorSpecialties)
-            .Include(s => s.Schedules);
+            .Where(d => d.DeletedOn == null);
 
         public DoctorRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task<IQueryable<Doctor>> GetFilteredDoctorsAsync(DoctorQueryModel queryModel)
+        public IQueryable<Doctor> GetFilteredDoctorsAsync(DoctorQueryModel queryModel)
         {
             var doctors = SelectQuery;
 
@@ -44,9 +42,10 @@ namespace YashfeenMedical.DAL.Repositories
                 "fullname" => queryModel.SortDirection == SortDirection.Descending
                     ? doctors.OrderByDescending(d => d.FullName)
                     : doctors.OrderBy(d => d.FullName),
+
                 "specialty" => queryModel.SortDirection == SortDirection.Descending
-                    ? doctors.OrderByDescending(p => p.DoctorSpecialties)
-                    : doctors.OrderBy(p => p.DoctorSpecialties),
+                ? doctors.OrderByDescending(d => d.DoctorSpecialties.Select(ds => ds.Specialty.Name).FirstOrDefault())
+                : doctors.OrderBy(d => d.DoctorSpecialties.Select(ds => ds.Specialty.Name).FirstOrDefault()),
 
                 _ => doctors.OrderBy(d => d.FullName)
             };
@@ -54,9 +53,5 @@ namespace YashfeenMedical.DAL.Repositories
             return doctors;
         }
 
-        public Task<TPaginationQueryModel<Doctor>> GetFilteredDoctorsWithPaginationAsync(DoctorQueryModel queryModel)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

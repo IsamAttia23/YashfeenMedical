@@ -13,9 +13,6 @@ namespace YashfeenMedical.BLL.DTOs.Doctors
         [Required]
         public string LicenseNumber { get; set; }
 
-        [Required]
-        public string Phone { get; set; }
-
         public string? Bio { get; set; }
 
         public bool IsAvailbe { get; set; } = true;
