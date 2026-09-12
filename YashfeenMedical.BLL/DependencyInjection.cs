@@ -18,6 +18,8 @@ namespace YashfeenMedical.BLL
         {
             TypeAdapterConfig.GlobalSettings.Scan(typeof(PatientMapper).Assembly);
             TypeAdapterConfig.GlobalSettings.Scan(typeof(DoctorMapper).Assembly);
+            TypeAdapterConfig.GlobalSettings.Scan(typeof(SpecialtyMapper).Assembly);
+            TypeAdapterConfig.GlobalSettings.Scan(typeof(AppointmentMapper).Assembly);
 
             services.AddMapster();
             services.AddDalServices(configuration);

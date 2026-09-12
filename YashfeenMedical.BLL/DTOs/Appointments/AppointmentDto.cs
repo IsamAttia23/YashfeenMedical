@@ -12,7 +12,7 @@ namespace YashfeenMedical.BLL.DTOs.Appointments
 
         public int DoctorId { get; set; }
 
-        public DateOnly AppointmentDate { get; set; }
+        public DateTimeOffset AppointmentDate { get; set; }
 
         public TimeOnly StartTime { get; set; }
 
