@@ -9,13 +9,12 @@ namespace YashfeenMedical.DAL.IRepositories
         where TEntity : class
         where TId : struct
     {
+        Task<IQueryable<TEntity>> GetAll();
         Task<TEntity?> GetById(TId id);
-        Task<TPaginationQueryModel<TEntity>> GetAll(PaginationQuery query);
         Task Add(TEntity entity);
         Task Delete(TId id);
         Task Update(TEntity entity);
         Task<bool> IsExists(TId id);
-        Task<TPaginationQueryModel<TEntity>> GetPaggedList(IQueryable<TEntity> entities, PaginationQuery query);
         Task SaveChanges();
     }
 }

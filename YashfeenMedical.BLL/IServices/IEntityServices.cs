@@ -12,9 +12,16 @@ namespace YashfeenMedical.BLL.IServices
         where TUpdateDto : class, TIdType<TId>
     {
         Task<TDto?> Details(TId id);
+
         Task<TPaginationQueryModel<TDto>> GetAll(PaginationQuery query);
+
         Task<TDto> Add(TCreationDto creationDTO);
+
         Task Delete(TId id);
+
         Task<TDto> Update(TId id, TUpdateDto updateDto);
+
+        Task<TPaginationQueryModel<TDto>> GetPaggedList(IQueryable<TDto> entities, PaginationQuery query);
+
     }
 }

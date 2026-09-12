@@ -36,12 +36,6 @@ namespace YashfeenMedical.DAL.Repositories
             await Update(entity);
         }
 
-        public async Task<TPaginationQueryModel<TEntity>> GetAll(PaginationQuery query)
-        {
-            var list = GetPaggedList(FinalQuery, query);
-            return await list;
-        }
-
         public async Task<TEntity?> GetById(TId id)
         {
             return await FinalQuery.FirstOrDefaultAsync(x => x.Id.Equals(id));
@@ -63,27 +57,9 @@ namespace YashfeenMedical.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<TPaginationQueryModel<TEntity>> GetPaggedList(IQueryable<TEntity> entities, PaginationQuery query)
+        public async Task<IQueryable<TEntity>> GetAll()
         {
-            var pageNumber = query?.PageNumber > 0 ? query.PageNumber : 1;
-            var pageSize = query?.PageSize > 0 ? query.PageSize : 10;
-            pageSize = Math.Min(pageSize, 50);
-
-            var totalCount = await entities.CountAsync();
-
-            var pagedList = await entities.Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize).ToListAsync();
-
-            var result = new TPaginationQueryModel<TEntity>
-            {
-                Data = pagedList,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalCount = totalCount,
-                TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
-            };
-
-            return result;
+            return FinalQuery;
         }
     }
 }

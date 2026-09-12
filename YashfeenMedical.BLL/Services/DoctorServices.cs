@@ -1,4 +1,5 @@
-﻿using MapsterMapper;
+﻿using Mapster;
+using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,8 @@ namespace YashfeenMedical.BLL.Services
         public async Task<TPaginationQueryModel<DoctorDto>> GetFilteredDoctorsWithPaginationAsync(DoctorQueryModel queryModel)
         {
             var doctors = _repository.GetFilteredDoctorsAsync(queryModel);
-            var paginatedDoctors = await _repository.GetPaggedList(doctors, queryModel);
+            var doctorsDtos = doctors.ProjectToType<DoctorDto>();
+            var paginatedDoctors = await GetPaggedList(doctorsDtos, queryModel);
 
             var result = _mapper.Map<TPaginationQueryModel<DoctorDto>>(paginatedDoctors);
 

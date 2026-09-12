@@ -13,8 +13,7 @@ namespace YashfeenMedical.DAL.Repositories
         private readonly ApplicationDbContext _context;
 
         public override IQueryable<Patient> SelectQuery => _context.Set<Patient>()
-            .Where(p => p.DeletedOn == null)
-            .Include(p => p.ApplicationUser);
+            .Where(p => p.DeletedOn == null);
 
         public PatientRepository(ApplicationDbContext context) : base(context)
         {

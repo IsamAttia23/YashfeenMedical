@@ -7,6 +7,8 @@ using YashfeenMedical.DAL.Shared.Entities;
 using YashfeenMedical.Infrastructure.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
+using Mapster;
 
 namespace YashfeenMedical.BLL.Services;
 
@@ -52,9 +54,9 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
     public virtual async Task<TPaginationQueryModel<TDto>> GetAll(PaginationQuery query)
     {
-        var pagedEntities = await _repository.GetAll(query);
+        var entities = await _repository.GetAll();
 
-        var result = _mapper.Map<TPaginationQueryModel<TDto>>(pagedEntities);
+        var result = await GetPaggedList(entities.ProjectToType<TDto>(), query);
 
         return result;
     }
@@ -87,4 +89,30 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
         var result = _mapper.Map<TDto>(mappedEntity);
         return result;
     }
+
+    public async Task<TPaginationQueryModel<TDto>> GetPaggedList(IQueryable<TDto> entities, PaginationQuery query)
+    {
+        var pageNumber = query?.PageNumber > 0 ? query.PageNumber : 1;
+        var pageSize = query?.PageSize > 0 ? query.PageSize : 10;
+        pageSize = Math.Min(pageSize, 50);
+
+        var totalCount = await entities.CountAsync();
+
+        var pagedList = await entities.Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ProjectToType<TDto>()
+            .ToListAsync();
+
+        var result = new TPaginationQueryModel<TDto>
+        {
+            Data = pagedList,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
+        };
+
+        return result;
+    }
 }
+

@@ -22,6 +22,7 @@ namespace YashfeenMedical.BLL
             services.AddMapster();
             services.AddDalServices(configuration);
             services.AddInfrastructureServices(configuration);
+            services.AddScoped<IPaginationServices, PaginationServices>();
 
             services.AddScoped<IAuthServices,AuthServices>();
             services.AddScoped<IPatientServices, PatientServices>();

@@ -1,3 +1,4 @@
+using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +29,7 @@ namespace YashfeenMedical.BLL.Services
         private readonly IMedicalFileRepository _medicalFileRepository;
         private readonly IUserManagmentServices _userManagmentServices;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IPaginationServices _paginationServices;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -35,7 +37,8 @@ namespace YashfeenMedical.BLL.Services
             , IAppointmentRepository appointmentRepository, IMedicalRecordRepository medicalRecordRepository,
               IPrescriptionRepository prescriptionRepository, IInvoiceRepository invoiceRepository,
               IMedicalFileRepository medicalFileRepository, IUserManagmentServices userManagmentServices,
-              IFileStorageService fileStorageService, IUnitOfWork unitOfWork) : base(repository, mapper)
+              IFileStorageService fileStorageService, IUnitOfWork unitOfWork,
+              IPaginationServices pagination) : base(repository, mapper)
         {
             _repository = repository;
             _appointmentRepository = appointmentRepository;
@@ -44,6 +47,7 @@ namespace YashfeenMedical.BLL.Services
             _invoiceRepository = invoiceRepository;
             _medicalFileRepository = medicalFileRepository;
             _userManagmentServices = userManagmentServices;
+            _paginationServices = pagination;
             _fileStorageService = fileStorageService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -52,57 +56,62 @@ namespace YashfeenMedical.BLL.Services
         public async Task<TPaginationQueryModel<PatientDto>> GetFilterdPatients(PatientQueryModel queryModel)
         {
             var patients = await _repository.GetFilteredPatientsAsync(queryModel);
-            var paggedPatients = await _repository.GetPaggedList(patients, queryModel);
+            var mappedPatients = patients.ProjectToType<PatientDto>();
 
-            var result = _mapper.Map<TPaginationQueryModel<PatientDto>>(paggedPatients);
+            var paggedList = await _paginationServices.GetPaggedList(mappedPatients, queryModel);
 
-            return result;
+            return paggedList;
         }
 
         public async Task<TPaginationQueryModel<InvoiceDto>> GetPaitentInvoices(PaginationQuery queryModel, int paitentId)
         {
             var invoices = await _invoiceRepository.GetInvoicesByPatientId(paitentId);
-            var paggedList = await _invoiceRepository.GetPaggedList(invoices, queryModel);
-            var result = _mapper.Map<TPaginationQueryModel<InvoiceDto>>(paggedList);
+            var mappedInvoices = invoices.ProjectToType<InvoiceDto>();
 
-            return result;
+            var paggedList = await _paginationServices.GetPaggedList(mappedInvoices, queryModel);
+
+            return paggedList;
         }
 
         public async Task<TPaginationQueryModel<AppointmentDto>> GetPaitentAppointments(PatientAppointmentsQueryModel queryModel, int paitentId)
         {
             var patientAppointments = _appointmentRepository.GetPatientAppointmentsAsync(paitentId);
             var filterdAppointments = _appointmentRepository.GetFilterdAppointmentsAsync(queryModel, patientAppointments);
-            var paggedList = await _appointmentRepository.GetPaggedList(filterdAppointments, queryModel);
-            var result = _mapper.Map<TPaginationQueryModel<AppointmentDto>>(paggedList);
+            var mappedAppointments = filterdAppointments.ProjectToType<AppointmentDto>();
 
-            return result;
+            var paggedList = await _paginationServices.GetPaggedList(mappedAppointments, queryModel);
+
+            return paggedList;
         }
 
         public async Task<TPaginationQueryModel<MedicalRecordDto>> GetPaitentMedicalRecords(PaginationQuery queryModel, int paitentId)
         {
             var medicalRecords = await _medicalRecordRepository.GetByPatientId(paitentId);
-            var paggedList = await _medicalRecordRepository.GetPaggedList(medicalRecords, queryModel);
-            var result = _mapper.Map<TPaginationQueryModel<MedicalRecordDto>>(paggedList);
+            var mappedMedicalRecords = medicalRecords.ProjectToType<MedicalRecordDto>();
 
-            return result;
+            var paggedList = await _paginationServices.GetPaggedList(mappedMedicalRecords, queryModel);
+
+            return paggedList;
         }
 
         public async Task<TPaginationQueryModel<MedicalFileDto>> GetPaitentMedicalFiles(PaginationQuery queryModel, int paitentId)
         {
             var medicalFiles = await _medicalFileRepository.GetMedicalFileByPatientId(paitentId);
-            var paggedList = await _medicalFileRepository.GetPaggedList(medicalFiles, queryModel);
-            var result = _mapper.Map<TPaginationQueryModel<MedicalFileDto>>(paggedList);
+            var mappedMedicalFiles = medicalFiles.ProjectToType<MedicalFileDto>();
 
-            return result;
+            var paggedList = await _paginationServices.GetPaggedList(mappedMedicalFiles, queryModel);
+
+            return paggedList;
         }
 
         public async Task<TPaginationQueryModel<PrescriptionDto>> GetPaitentPrescriptions(PaginationQuery queryModel, int paitentId)
         {
             var prescriptions = await _prescriptionRepository.GetPrescriptionsByPatientId(paitentId);
-            var paggedList = await _prescriptionRepository.GetPaggedList(prescriptions, queryModel);
-            var result = _mapper.Map<TPaginationQueryModel<PrescriptionDto>>(paggedList);
+            var mappedPrescriptions = prescriptions.ProjectToType<PrescriptionDto>();
 
-            return result;
+            var paggedList = await _paginationServices.GetPaggedList(mappedPrescriptions, queryModel);
+
+            return paggedList;
         }
 
         public async Task<string> TogglePatientActivitiy(int patientId)
