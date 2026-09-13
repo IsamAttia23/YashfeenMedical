@@ -7,5 +7,6 @@ namespace YashfeenMedical.BLL.IServices
 {
     public interface ISpecialtyServices : IEntityServices<int, SpecialtyDto,SpecialtyCreationDto,SpecialtyUpdateDto>
     {
+        Task<bool> IsExistsAsync(int id);
     }
 }

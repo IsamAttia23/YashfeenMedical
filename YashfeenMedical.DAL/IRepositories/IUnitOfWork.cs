@@ -9,6 +9,7 @@ namespace YashfeenMedical.DAL.IRepositories
     {
         IPatientRepository Patients { get; }
         IDoctorRepository Doctors { get; }
+        ISpecialtyRepository Specialties { get; }
 
         Task<int> SaveChangesAsync();
 

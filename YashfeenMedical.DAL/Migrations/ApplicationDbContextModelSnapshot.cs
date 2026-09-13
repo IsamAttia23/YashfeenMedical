@@ -316,7 +316,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("DoctorId", "AppointmentDate", "StartTime")
                         .IsUnique();
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.Doctor", b =>
@@ -376,7 +376,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Doctors");
+                    b.ToTable("Doctors", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.DoctorSchedule", b =>
@@ -423,7 +423,7 @@ namespace YashfeenMedical.DAL.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.ToTable("DoctorSchedules");
+                    b.ToTable("DoctorSchedules", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.DoctorSpecialty", b =>
@@ -438,7 +438,7 @@ namespace YashfeenMedical.DAL.Migrations
 
                     b.HasIndex("SpecialtyId");
 
-                    b.ToTable("DoctorSpecialties");
+                    b.ToTable("DoctorSpecialties", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.InsurancePolicy", b =>
@@ -499,7 +499,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("PolicyNumber")
                         .IsUnique();
 
-                    b.ToTable("InsurancePolicies");
+                    b.ToTable("InsurancePolicies", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.Invoice", b =>
@@ -585,7 +585,7 @@ namespace YashfeenMedical.DAL.Migrations
 
                     b.HasIndex("PatientId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.InvoiceItem", b =>
@@ -634,7 +634,7 @@ namespace YashfeenMedical.DAL.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.ToTable("InvoiceItems");
+                    b.ToTable("InvoiceItems", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.MedicalFile", b =>
@@ -706,7 +706,7 @@ namespace YashfeenMedical.DAL.Migrations
 
                     b.HasIndex("UploadedByUserId");
 
-                    b.ToTable("MedicalFiles");
+                    b.ToTable("MedicalFiles", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.MedicalRecord", b =>
@@ -766,7 +766,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("AppointmentId")
                         .IsUnique();
 
-                    b.ToTable("MedicalRecords");
+                    b.ToTable("MedicalRecords", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.Medication", b =>
@@ -815,7 +815,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Medications");
+                    b.ToTable("Medications", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.Patient", b =>
@@ -894,7 +894,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Patients");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.Prescription", b =>
@@ -943,7 +943,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("PrescriptionNumber")
                         .IsUnique();
 
-                    b.ToTable("Prescriptions");
+                    b.ToTable("Prescriptions", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.PrescriptionItem", b =>
@@ -993,7 +993,7 @@ namespace YashfeenMedical.DAL.Migrations
 
                     b.HasIndex("PrescriptionId");
 
-                    b.ToTable("PrescriptionItems");
+                    b.ToTable("PrescriptionItems", (string)null);
                 });
 
             modelBuilder.Entity("YashfeenMedical.DAL.Models.Specialty", b =>
@@ -1026,7 +1026,7 @@ namespace YashfeenMedical.DAL.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Specialties");
+                    b.ToTable("Specialties", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

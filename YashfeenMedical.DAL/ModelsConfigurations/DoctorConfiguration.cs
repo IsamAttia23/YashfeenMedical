@@ -16,6 +16,10 @@ namespace YashfeenMedical.DAL.ModelsConfigurations
                  .HasForeignKey<Doctor>(d => d.UserId)
                  .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(s => s.Specialties)
+                   .WithMany(d => d.Doctors)
+                   .UsingEntity<DoctorSpecialty>();
+
             builder.HasIndex(d => d.UserId).IsUnique();
             builder.HasIndex(d => d.LicenseNumber).IsUnique();
 

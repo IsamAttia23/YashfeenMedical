@@ -20,8 +20,5 @@ namespace YashfeenMedical.BLL.IServices
         Task Delete(TId id);
 
         Task<TDto> Update(TId id, TUpdateDto updateDto);
-
-        Task<TPaginationQueryModel<TDto>> GetPaggedList(IQueryable<TDto> entities, PaginationQuery query);
-
     }
 }

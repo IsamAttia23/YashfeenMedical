@@ -14,13 +14,15 @@ namespace YashfeenMedical.DAL.Repositories
 
         public IPatientRepository Patients { get; }
         public IDoctorRepository Doctors { get; }
+        public ISpecialtyRepository Specialties { get; }
 
         public UnitOfWork(ApplicationDbContext context, IPatientRepository patientRepository
-            , IDoctorRepository doctorRepository)
+            , IDoctorRepository doctorRepository, ISpecialtyRepository specialtyRepository)
         {
             _context = context;
             Patients = patientRepository;
             Doctors = doctorRepository;
+            Specialties = specialtyRepository;
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();

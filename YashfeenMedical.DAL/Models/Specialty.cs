@@ -13,6 +13,7 @@ namespace YashfeenMedical.DAL.Models
         public string? Description { get; set; }
 
         public IList<DoctorSpecialty> DoctorSpecialties { get; set; }
+        public IList<Doctor> Doctors { get; set; }
 
     }
 }

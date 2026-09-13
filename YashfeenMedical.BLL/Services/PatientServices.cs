@@ -38,7 +38,7 @@ namespace YashfeenMedical.BLL.Services
               IPrescriptionRepository prescriptionRepository, IInvoiceRepository invoiceRepository,
               IMedicalFileRepository medicalFileRepository, IUserManagmentServices userManagmentServices,
               IFileStorageService fileStorageService, IUnitOfWork unitOfWork,
-              IPaginationServices pagination) : base(repository, mapper)
+              IPaginationServices pagination) : base(repository, mapper, pagination)
         {
             _repository = repository;
             _appointmentRepository = appointmentRepository;

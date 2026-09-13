@@ -22,11 +22,15 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
     where TUpdateDto : class, TIdType<TId>
 {
     private readonly IRepository<TEntity, TId> _repository;
+
+    private readonly IPaginationServices _paginationServices;
     private readonly IMapper _mapper;
 
-    public TEntityService(IRepository<TEntity, TId> repository, IMapper mapper)
+    public TEntityService(IRepository<TEntity, TId> repository, IMapper mapper,
+        IPaginationServices paginationServices)
     {
         _repository = repository;
+        _paginationServices = paginationServices;
         _mapper = mapper;
     }
 
@@ -56,7 +60,7 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
     {
         var entities = await _repository.GetAll();
 
-        var result = await GetPaggedList(entities.ProjectToType<TDto>(), query);
+        var result = await _paginationServices.GetPaggedList(entities.ProjectToType<TDto>(), query);
 
         return result;
     }
@@ -87,31 +91,6 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
         await _repository.SaveChanges();
 
         var result = _mapper.Map<TDto>(mappedEntity);
-        return result;
-    }
-
-    public async Task<TPaginationQueryModel<TDto>> GetPaggedList(IQueryable<TDto> entities, PaginationQuery query)
-    {
-        var pageNumber = query?.PageNumber > 0 ? query.PageNumber : 1;
-        var pageSize = query?.PageSize > 0 ? query.PageSize : 10;
-        pageSize = Math.Min(pageSize, 50);
-
-        var totalCount = await entities.CountAsync();
-
-        var pagedList = await entities.Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ProjectToType<TDto>()
-            .ToListAsync();
-
-        var result = new TPaginationQueryModel<TDto>
-        {
-            Data = pagedList,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalCount = totalCount,
-            TotalPages = (int)Math.Ceiling((double)totalCount / pageSize)
-        };
-
         return result;
     }
 }

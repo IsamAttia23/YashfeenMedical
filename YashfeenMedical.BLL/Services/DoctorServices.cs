@@ -24,106 +24,63 @@ namespace YashfeenMedical.BLL.Services
         private readonly IFileStorageService _fileStorageService;
         private readonly IUnitOfWork _unitOfWork;
 
+        private readonly IPaginationServices _paginationServices;
+
         public DoctorServices(IDoctorRepository repository, IMapper mapper
             , IUserManagmentServices userManagmentServices, IFileStorageService fileStorageService
-            , IUnitOfWork unitOfWork) : base(repository, mapper)
+            , IUnitOfWork unitOfWork, IPaginationServices paginationServices) : base(repository, mapper, paginationServices)
         {
             _repository = repository;
             _mapper = mapper;
             _fileStorageService = fileStorageService;
             _userManagmentServices = userManagmentServices;
             _unitOfWork = unitOfWork;
+            _paginationServices = paginationServices;
         }
 
         public async Task<TPaginationQueryModel<DoctorDto>> GetFilteredDoctorsWithPaginationAsync(DoctorQueryModel queryModel)
         {
             var doctors = _repository.GetFilteredDoctorsAsync(queryModel);
             var doctorsDtos = doctors.ProjectToType<DoctorDto>();
-            var paginatedDoctors = await GetPaggedList(doctorsDtos, queryModel);
 
-            var result = _mapper.Map<TPaginationQueryModel<DoctorDto>>(paginatedDoctors);
+            var paginatedDoctors = await _paginationServices.GetPaggedList(doctorsDtos, queryModel);
 
-            return result;
+            return paginatedDoctors;
         }
 
         public async override Task<DoctorDto> Add(DoctorCreationDto creationDto)
         {
-            var userName = await _userManagmentServices.FindUserByNameAsync(creationDto.UserName);
-
-            if (userName != null)
-                throw new BadRequestException("this username is used by another user");
-
-            var userEmail = await _userManagmentServices.FindUserByEmailAsync(creationDto.Email);
-
-            if (userEmail != null)
-                throw new BadRequestException("this email is used by another user");
-
-            var mappedDoctor = _mapper.Map<Doctor>(creationDto);
-
-            string? profilePicturePath = null;
+            await CheckUserInformation(
+                creationDto.UserName,
+                creationDto.Email);
 
             await _unitOfWork.BeginTransactionAsync();
 
+            string? profilePicturePath = null;
+
             try
             {
-                if (creationDto.ProfilePhoto != null)
-                {
-                    profilePicturePath = await SetProfilePhoto(mappedDoctor, creationDto.ProfilePhoto);
-                }
+                var user = await CreateDoctorUserAsync(creationDto);
 
-                var user = new ApplicationUser
-                {
-                    UserName = creationDto.UserName,
-                    Email = creationDto.Email,
-                    IsActive = true,
-                    CreatedOn = DateTimeOffset.UtcNow,
-                    PhoneNumber = creationDto.PhoneNumber,
+                var doctor = await CreateDoctorAsync(creationDto, user, profilePicturePath);
 
-                };
-
-                var createResult = await _userManagmentServices.CreateUserAsync(user, creationDto.Password);
-                if (!createResult.Succeeded)
-                {
-                    throw new InternalServerErorrException(
-                        string.Join(", ", createResult.Errors.Select(e => e.Description)));
-                }
-
-                await _userManagmentServices.AddUserToRole(user, "Doctor");
-
-
-                mappedDoctor.UserId = user.Id;
-                mappedDoctor.ProfilePhotoUrl = profilePicturePath;
-
-                await _unitOfWork.Doctors.Add(mappedDoctor);
+                await _unitOfWork.Doctors.Add(doctor);
                 await _unitOfWork.SaveChangesAsync();
-
-
-
-                var result = _mapper.Map<DoctorDto>(mappedDoctor);
-
-                if (profilePicturePath != null)
-                    result.ProfilePhotoUrl = _fileStorageService.GenerateSignedUrl(profilePicturePath, TimeSpan.FromHours(1));
 
                 await _unitOfWork.CommitTransactionAsync();
 
-                return result;
+                return MapDoctorToDto(doctor, profilePicturePath);
             }
             catch (AppException)
             {
                 await RollbackAction(profilePicturePath);
                 throw;
             }
-
             catch (Exception ex)
             {
+                await RollbackAction(profilePicturePath);
 
-                await _unitOfWork.RollbackTransactionAsync();
-
-                if (profilePicturePath != null)
-                    _fileStorageService.DeleteFile(profilePicturePath);
-
-                throw new InternalServerErorrException(
-                ex.InnerException?.Message ?? ex.Message);
+                throw new InternalServerErorrException(ex.InnerException?.Message ?? ex.Message);
             }
         }
 
@@ -140,12 +97,102 @@ namespace YashfeenMedical.BLL.Services
             return newPhotoPath;
         }
 
-        private async Task RollbackAction(string? photoPath)
+        private async Task RollbackAction(string? profilePicturePath)
         {
             await _unitOfWork.RollbackTransactionAsync();
 
-            if (photoPath != null)
-                _fileStorageService.DeleteFile(photoPath);
+            if (!string.IsNullOrWhiteSpace(profilePicturePath))
+            {
+                _fileStorageService.DeleteFile(profilePicturePath);
+            }
+        }
+        private async Task CheckUserInformation(string name, string email)
+        {
+            var userName = await _userManagmentServices.FindUserByNameAsync(name);
+
+            if (userName != null)
+                throw new BadRequestException("this username is used by another user");
+
+            var userEmail = await _userManagmentServices.FindUserByEmailAsync(email);
+
+            if (userEmail != null)
+                throw new BadRequestException("this email is used by another user");
+        }
+        private async Task<IList<Specialty>> GetDoctorSpecialties(IList<int> ids)
+        {
+            var specialties = new List<Specialty>();
+
+            foreach (var id in ids)
+            {
+                var specialty = await _unitOfWork.Specialties.GetById(id)
+                    ?? throw new NotFoundException($"Specialty with id {id} not found");
+
+                specialties.Add(specialty);
+            }
+
+            return specialties;
+        }
+        private async Task<ApplicationUser> CreateDoctorUserAsync(DoctorCreationDto creationDto)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = creationDto.UserName,
+                Email = creationDto.Email,
+                IsActive = true,
+                CreatedOn = DateTimeOffset.UtcNow,
+                PhoneNumber = creationDto.PhoneNumber
+            };
+
+            var result = await _userManagmentServices
+                .CreateUserAsync(user, creationDto.Password);
+
+            if (!result.Succeeded)
+            {
+                throw new InternalServerErorrException(
+                    string.Join(", ",
+                        result.Errors.Select(e => e.Description)));
+            }
+
+            await _userManagmentServices.AddUserToRole(
+                user,
+                "Doctor");
+
+            return user;
+        }
+        private async Task<Doctor> CreateDoctorAsync(DoctorCreationDto creationDto, ApplicationUser user, string? profilePicturePath)
+        {
+            var doctor = _mapper.Map<Doctor>(creationDto);
+
+            profilePicturePath = null;
+
+            if (creationDto.ProfilePhoto != null)
+            {
+                profilePicturePath = await SetProfilePhoto(
+                    doctor,
+                    creationDto.ProfilePhoto);
+            }
+
+            doctor.UserId = user.Id;
+            doctor.ProfilePhotoUrl = profilePicturePath;
+
+            doctor.Specialties =
+                await GetDoctorSpecialties(creationDto.Specialties);
+
+            return doctor;
+        }
+        private DoctorDto MapDoctorToDto(Doctor doctor, string? profilePicturePath)
+        {
+            var result = _mapper.Map<DoctorDto>(doctor);
+
+            if (!string.IsNullOrWhiteSpace(profilePicturePath))
+            {
+                result.ProfilePhotoUrl =
+                    _fileStorageService.GenerateSignedUrl(
+                        profilePicturePath,
+                        TimeSpan.FromHours(1));
+            }
+
+            return result;
         }
     }
 }
