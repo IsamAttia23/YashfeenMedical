@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using YashfeenMedical.DAL.Enums;
 
 namespace YashfeenMedical.DAL.Models
 {
@@ -14,7 +15,7 @@ namespace YashfeenMedical.DAL.Models
         public Doctor Doctor { get; set; }
 
         [Required]
-        public DayOfWeek DayOfWeek { get; set; }
+        public ScheduleDayOfWeek DayOfWeek { get; set; }
 
         [Required]
         public TimeOnly StartTime { get; set; }

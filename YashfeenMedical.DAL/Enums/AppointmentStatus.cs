@@ -10,7 +10,7 @@ namespace YashfeenMedical.DAL.Enums
         Confirmed,
         InProgress,
         Completed,
-        Canceled,
+        Cancelled,
         NoShow
     }
 }

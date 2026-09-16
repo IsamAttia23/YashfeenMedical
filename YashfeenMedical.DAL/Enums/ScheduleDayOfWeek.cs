@@ -4,7 +4,7 @@ using System.Text;
 
 namespace YashfeenMedical.DAL.Enums
 {
-    public enum DayOfWeek
+    public enum ScheduleDayOfWeek
     {
         Sunday,
         Monday,

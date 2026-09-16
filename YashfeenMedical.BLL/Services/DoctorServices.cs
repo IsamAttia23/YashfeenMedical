@@ -5,14 +5,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using YashfeenMedical.BLL.DTOs.Doctors;
+using YashfeenMedical.BLL.DTOs.DoctorSchedules;
 using YashfeenMedical.BLL.DTOs.Patients;
 using YashfeenMedical.BLL.IServices;
+using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
+using YashfeenMedical.DAL.Repositories;
 using YashfeenMedical.Infrastructure.Exceptions;
 using YashfeenMedical.Infrastructure.FileStorage;
 using YashfeenMedical.Infrastructure.UsersManagment;
+using Microsoft.EntityFrameworkCore;
+using dal = YashfeenMedical.DAL;
 
 namespace YashfeenMedical.BLL.Services
 {
@@ -43,9 +48,9 @@ namespace YashfeenMedical.BLL.Services
             var doctors = _repository.GetFilteredDoctorsAsync(queryModel);
             var doctorsDtos = doctors.ProjectToType<DoctorDto>();
 
-            var paginatedDoctors = await _paginationServices.GetPaggedList(doctorsDtos, queryModel);
+            var paggedList = await _paginationServices.GetPaggedList(doctorsDtos, queryModel);
 
-            return paginatedDoctors;
+            return paggedList;
         }
 
         public async override Task<DoctorDto> Add(DoctorCreationDto creationDto)
@@ -84,6 +89,23 @@ namespace YashfeenMedical.BLL.Services
             }
         }
 
+        public async Task<TPaginationQueryModel<DoctorScheduleDto>> GetDoctorSchedule(int doctorId, PaginationQuery paginationQuery)
+        {
+            var doctor = await Details(doctorId);
+
+            var schedule = _unitOfWork.DoctorSchedules.GetDoctorScheduleAsync(doctorId);
+            var scheduleDtos = schedule.ProjectToType<DoctorScheduleDto>();
+
+            var paggedList = await _paginationServices.GetPaggedList(scheduleDtos, paginationQuery);
+
+            return paggedList;
+        }
+
+        public async Task<DoctorScheduleDto> GetDoctorScheduleOnDayAsync(int doctorId, DateOnly dayOfWee)
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<string?> SetProfilePhoto(Doctor patient, IFormFile profilePhoto)
         {
             var oldPhotoPath = patient.ProfilePhotoUrl;
@@ -96,7 +118,6 @@ namespace YashfeenMedical.BLL.Services
 
             return newPhotoPath;
         }
-
         private async Task RollbackAction(string? profilePicturePath)
         {
             await _unitOfWork.RollbackTransactionAsync();
@@ -193,6 +214,79 @@ namespace YashfeenMedical.BLL.Services
             }
 
             return result;
+        }
+
+        private async Task<DoctorSchedule> CheckActiveSchedule(int doctorId, DateOnly date)
+        {
+            var dayOfWeek = (dal.Enums.ScheduleDayOfWeek)date.DayOfWeek;
+
+            var schedule = await _unitOfWork.DoctorSchedules
+                .GetByDoctorAndDayAsync(doctorId, dayOfWeek);
+            if (schedule == null)
+                throw new NotFoundException($"No schedule found for doctor with id {doctorId} on {dayOfWeek}");
+
+            if (!schedule.IsActive)
+                throw new BadRequestException($"The schedule for doctor with id {doctorId} on {dayOfWeek} is not active");
+
+            return schedule;
+        }
+        private void CheckDate(DateOnly date)
+        {
+            if (date < DateOnly.FromDateTime(DateTime.UtcNow))
+                throw new BadRequestException("cannot display available times for a past date");
+        }
+        private List<TimeOnly> GetSlots(DoctorSchedule schedule)
+        {
+            var slots = new List<TimeOnly>();
+            var current = schedule.StartTime;
+
+            while (current.Add(TimeSpan.FromMinutes(schedule.SlotDurationMinutes)) <= schedule.EndTime)
+            {
+                slots.Add(current);
+                current = current.AddMinutes(schedule.SlotDurationMinutes);
+            }
+
+            return slots;
+        }
+        private async Task<List<TimeOnly>> GetAppointmentsOnDay(int doctorId, DateTimeOffset date)
+        {
+            var appointments = await _unitOfWork.AppointmentRepository.GetAll();
+
+            var bookedTimes = await appointments.Where(a => a.DoctorId == doctorId
+             && a.AppointmentDate == date
+             && a.Status != AppointmentStatus.Cancelled
+             && a.Status != AppointmentStatus.NoShow)
+             .Select(a => a.StartTime)
+             .ToListAsync();
+
+            return bookedTimes;
+        }
+        private List<AvailableSlotDto> GetAvailableSlots(List<TimeOnly> slots, List<TimeOnly> bookedTimes, DoctorSchedule schedule)
+        {
+            var availableSlots = slots
+           .Where(s => !bookedTimes.Contains(s))
+           .Select(s => new AvailableSlotDto
+           {
+              StartTime = s,
+              EndTime = s.AddMinutes(schedule.SlotDurationMinutes),
+              IsAvailable = true
+           })
+           .ToList();
+
+            return availableSlots;
+        }
+        private void SetAvailableSlotsDateRange(List<AvailableSlotDto> availableSlots, DateOnly date)
+        {
+            if (date == DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                var now = TimeOnly.FromDateTime(DateTime.UtcNow);
+                availableSlots = availableSlots.Where(s => s.StartTime > now).ToList();
+            }
+        }
+        private void CheckMaxAppointmentsPerDay(List<TimeOnly> bookedTimes,DoctorSchedule schedule)
+        {
+            if (bookedTimes.Count >= schedule.MaxAppointmentsPerDay)
+                throw new BadRequestException("this doctor has reached the Max Appointments Per Day");
         }
     }
 }

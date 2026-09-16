@@ -34,5 +34,15 @@ namespace YashfeenMedical.API.Controllers
             var result = await Add(creationDto);
             return CreatedAtAction(nameof(Details), new { id = result.Id }, result);
         }
+
+        [HttpGet("{id}/schedule")]
+        public async Task<IActionResult> GetDoctorScheduleAsync(int doctorId,PaginationQuery paginationQuery)
+        {
+            var result = await _services.GetDoctorSchedule(doctorId, paginationQuery);
+
+            return Ok(result);
+        }
+
+
     }
 }
