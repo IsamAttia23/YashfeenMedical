@@ -14,6 +14,6 @@ namespace YashfeenMedical.BLL.IServices
 
         Task<TPaginationQueryModel<DoctorScheduleDto>> GetDoctorSchedule(int doctorId, PaginationQuery paginationQuery);
 
-        Task<DoctorScheduleDto> GetDoctorScheduleOnDayAsync(int doctorId,DateOnly date);
+        Task<List<AvailableSlotDto>> GetDoctorScheduleOnDayAsync(int doctorId,DateTimeOffset date);
     }
 }
