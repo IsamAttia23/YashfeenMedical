@@ -223,6 +223,96 @@ namespace YashfeenMedical.BLL.Services
             }
         }
 
+        public async override Task<DoctorDto> Update(int id, DoctorUpdateDto updateDto)
+        {
+            var doctor = await _repository.GetById(id);
+
+            if (doctor == null)
+                throw new NotFoundException("The request entity dosen't exits");
+
+            var oldProfilePicturePath = doctor.ProfilePhotoUrl;
+            string? newPofilePicturePath = null;
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                if (updateDto.ProfilePhoto != null)
+                {
+                    newPofilePicturePath = await SetProfilePhoto(doctor, updateDto.ProfilePhoto);
+                }
+
+                var mappedEntity = _mapper.Map(updateDto, doctor);
+
+                var user = await _userManagmentServices.FindUserAsync(mappedEntity.UserId);
+
+                await SetUserName(user, updateDto.UserName);
+                await SetEmail(user, updateDto.Email);
+                await SetPhoneNumber(user, updateDto.PhoneNumber);
+
+                mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
+
+                await _unitOfWork.Doctors.Update(mappedEntity);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                var result = _mapper.Map<DoctorDto>(mappedEntity);
+
+                if (newPofilePicturePath != null && !string.IsNullOrWhiteSpace(oldProfilePicturePath))
+                {
+                    _fileStorageService.DeleteFile(oldProfilePicturePath);
+                }
+
+                if (newPofilePicturePath != null)
+                    result.ProfilePhotoUrl = _fileStorageService.GenerateSignedUrl(newPofilePicturePath, TimeSpan.FromHours(1));
+
+                return result;
+            }
+
+            catch (AppException)
+            {
+                throw;
+            }
+
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+
+                if (newPofilePicturePath != null)
+                    _fileStorageService.DeleteFile(newPofilePicturePath);
+
+                throw new Exception("Error occurred while saving the patient.", ex);
+            }
+        }
+
+        public async override Task Delete(int id)
+        {
+            var doctor = await _repository.GetById(id);
+
+            if (doctor == null)
+                throw new NotFoundException("The request entity dosen't exits");
+
+            var user = await _userManagmentServices.FindUserAsync(doctor.UserId);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                user.DeletedOn = DateTimeOffset.UtcNow;
+                user.IsActive = false;
+                await _userManagmentServices.UpdateUserAsync(user);
+                await _repository.Delete(id);
+
+                await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.CommitTransactionAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new Exception("Error occurred while deleting the patient.", ex);
+            }
+
+        }
+
         private async Task<string?> SetProfilePhoto(Doctor patient, IFormFile profilePhoto)
         {
             var oldPhotoPath = patient.ProfilePhotoUrl;
@@ -415,6 +505,44 @@ namespace YashfeenMedical.BLL.Services
         {
             if (bookedTimes.Count >= schedule.MaxAppointmentsPerDay)
                 throw new BadRequestException("this doctor has reached the Max Appointments Per Day");
+        }
+
+        private async Task SetUserName(ApplicationUser user, string userName)
+        {
+            if (!string.IsNullOrWhiteSpace(userName) && userName != user.UserName)
+            {
+                var nameExists = await _userManagmentServices.FindUserByNameAsync(userName);
+                if (nameExists != null && nameExists.Id != user.Id)
+                    throw new ConflictException("this username is already in use");
+
+                var nameResult = await _userManagmentServices.SetUserNameAsync(user, userName);
+                if (!nameResult.Succeeded)
+                    throw new BadRequestException(string.Join(", ", nameResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        private async Task SetPhoneNumber(ApplicationUser user, string phoneNumber)
+        {
+            if (!string.IsNullOrWhiteSpace(phoneNumber) && phoneNumber != user.PhoneNumber)
+            {
+                var phoneResult = await _userManagmentServices.SetPhoneNumberAsync(user, phoneNumber);
+                if (!phoneResult.Succeeded)
+                    throw new BadRequestException(string.Join(", ", phoneResult.Errors.Select(e => e.Description)));
+            }
+        }
+
+        private async Task SetEmail(ApplicationUser user, string email)
+        {
+            if (!string.IsNullOrWhiteSpace(email) && email != user.Email)
+            {
+                var emailExists = await _userManagmentServices.FindUserByEmailAsync(email);
+                if (emailExists != null && emailExists.Id != user.Id)
+                    throw new ConflictException("this email is already in use");
+                var emailResult = await _userManagmentServices.SetUserEmailAsync(user, email);
+
+                if (!emailResult.Succeeded)
+                    throw new BadRequestException(string.Join(", ", emailResult.Errors.Select(e => e.Description)));
+            }
         }
     }
 }
