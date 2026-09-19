@@ -92,7 +92,7 @@ namespace YashfeenMedical.BLL.Services
 
         public async Task<TPaginationQueryModel<DoctorScheduleDto>> GetDoctorSchedule(int doctorId, PaginationQuery paginationQuery)
         {
-            var doctor = await Details(doctorId);
+            await IsExists(doctorId);
 
             var schedule = _unitOfWork.DoctorSchedules.GetDoctorScheduleAsync(doctorId);
             var scheduleDtos = schedule.ProjectToType<DoctorScheduleDto>();
@@ -105,6 +105,8 @@ namespace YashfeenMedical.BLL.Services
         public async Task<List<AvailableSlotDto>> GetDoctorScheduleOnDayAsync(int doctorId, DateOnly date)
         {
             CheckDate(date);
+
+            await IsExists(doctorId);
 
             var schedule = await CheckActiveSchedule(doctorId, date);
             var bookedTimes = await GetBookedTimes(doctorId, date);
@@ -134,7 +136,7 @@ namespace YashfeenMedical.BLL.Services
 
         public async Task<DoctorScheduleDto> UpsertSchedule(int doctorId, DoctorScheduleUpdateDto doctorSchedule)
         {
-            var doctor = await Details(doctorId);
+            await IsExists(doctorId);
 
             var schdeule = await _unitOfWork.DoctorSchedules.GetById(doctorSchedule.Id);
 
@@ -151,7 +153,8 @@ namespace YashfeenMedical.BLL.Services
                 await _unitOfWork.DoctorSchedules.Update(schdeule);
                 await _unitOfWork.SaveChangesAsync();
                 return _mapper.Map<DoctorScheduleDto>(schdeule);
-            };
+            }
+            ;
         }
 
         private async Task<string?> SetProfilePhoto(Doctor patient, IFormFile profilePhoto)

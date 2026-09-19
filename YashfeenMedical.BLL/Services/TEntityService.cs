@@ -93,5 +93,13 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
         var result = _mapper.Map<TDto>(mappedEntity);
         return result;
     }
+
+    public async Task IsExists(TId id)
+    {
+       var isExists = await _repository.IsExists(id);
+
+        if (!isExists)
+            throw new NotFoundException("The request entity dosen't exits");
+    }
 }
 
