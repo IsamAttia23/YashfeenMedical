@@ -157,6 +157,72 @@ namespace YashfeenMedical.BLL.Services
             ;
         }
 
+        public async Task<string> TogglePatientActivitiy(int doctorId)
+        {
+            var doctor = await _repository.GetById(doctorId);
+
+            if (doctor.IsAvailable == false)
+            {
+                doctor.IsAvailable = true;
+                await _repository.Update(doctor);
+                return "doctor is now available";
+            }
+            else
+            {
+                doctor.IsAvailable = false;
+                await _repository.Update(doctor);
+                return "doctor is now unavailable";
+            }
+        }
+
+        public async Task<bool> UploadPatientPhoto(int doctorId, IFormFile ProfilePhoto)
+        {
+
+            {
+                var doctor = await _repository.GetById(doctorId)
+                    ?? throw new NotFoundException("The request entity dosen't exits");
+
+                var oldPhotoPath = doctor.ProfilePhotoUrl;
+
+                string? profilePicturePath = null;
+
+                try
+                {
+                    if (ProfilePhoto != null)
+                    {
+                        profilePicturePath = await SetProfilePhoto(doctor, ProfilePhoto);
+                    }
+
+                    await _repository.Update(doctor);
+
+                    if (profilePicturePath != null && !string.IsNullOrWhiteSpace(oldPhotoPath))
+                    {
+                        _fileStorageService.DeleteFile(oldPhotoPath);
+                    }
+
+                    return true;
+                }
+
+                catch (AppException)
+                {
+                    if (profilePicturePath != null)
+                        _fileStorageService.DeleteFile(profilePicturePath);
+
+                    throw;
+                }
+
+                catch (Exception ex)
+                {
+
+                    if (profilePicturePath != null)
+                        _fileStorageService.DeleteFile(profilePicturePath);
+
+                    throw new Exception("Error occurred while uploading doctor photo.", ex);
+                }
+
+            }
+        }
+
         private async Task<string?> SetProfilePhoto(Doctor patient, IFormFile profilePhoto)
         {
             var oldPhotoPath = patient.ProfilePhotoUrl;
@@ -350,7 +416,5 @@ namespace YashfeenMedical.BLL.Services
             if (bookedTimes.Count >= schedule.MaxAppointmentsPerDay)
                 throw new BadRequestException("this doctor has reached the Max Appointments Per Day");
         }
-
-
     }
 }

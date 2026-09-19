@@ -20,7 +20,7 @@ namespace YashfeenMedical.DAL.Models
         [Required]
         public string LicenseNumber { get; set; }
         public string? Bio { get; set; }
-        public bool IsAvailbe { get; set; }
+        public bool IsAvailable { get; set; }
 
         [Required, Range(0.1, double.MaxValue)]
         public decimal ConsultationFee { get; set; }

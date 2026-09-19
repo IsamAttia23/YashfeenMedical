@@ -52,5 +52,15 @@ namespace YashfeenMedical.API.Controllers
             var result = await _services.GetDoctorScheduleOnDayAsync(id, date);
             return Ok(result);
         }
+
+        [HttpPost("{id}/schedule")]
+        public async Task<IActionResult> GetDoctorSchedule(int id, PaginationQuery paginationQuery)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _services.GetDoctorSchedule(id, paginationQuery);
+            return Ok(result);
+        }
     }
 }
