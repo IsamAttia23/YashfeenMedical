@@ -7,5 +7,6 @@ namespace YashfeenMedical.DAL.IRepositories
     {
         IQueryable<Appointment> GetPatientAppointmentsAsync(int patientId);
         IQueryable<Appointment> GetFilterdAppointmentsAsync(PatientAppointmentsQueryModel queryModel, IQueryable<Appointment> patientAppointments);
+        IQueryable<Appointment> GetDoctorAppointments(int doctorId);
     }
 }

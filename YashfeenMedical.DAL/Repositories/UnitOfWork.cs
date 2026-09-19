@@ -16,7 +16,7 @@ namespace YashfeenMedical.DAL.Repositories
         public IDoctorRepository Doctors { get; }
         public ISpecialtyRepository Specialties { get; }
         public IDoctorScheduleRepository DoctorSchedules { get; }
-        public IAppointmentRepository AppointmentRepository { get; }
+        public IAppointmentRepository Appointments { get; }
 
         public UnitOfWork(ApplicationDbContext context, IPatientRepository patientRepository
             , IDoctorRepository doctorRepository, ISpecialtyRepository specialtyRepository
@@ -27,7 +27,7 @@ namespace YashfeenMedical.DAL.Repositories
             Doctors = doctorRepository;
             Specialties = specialtyRepository;
             DoctorSchedules = doctorSchedule;
-            AppointmentRepository = appointmentRepository;
+            Appointments = appointmentRepository;
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();

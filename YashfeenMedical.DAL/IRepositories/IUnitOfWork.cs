@@ -11,7 +11,7 @@ namespace YashfeenMedical.DAL.IRepositories
         IDoctorRepository Doctors { get; }
         ISpecialtyRepository Specialties { get; }
         IDoctorScheduleRepository DoctorSchedules { get; } 
-        IAppointmentRepository AppointmentRepository { get; }
+        IAppointmentRepository Appointments { get; }
 
         Task<int> SaveChangesAsync();
 

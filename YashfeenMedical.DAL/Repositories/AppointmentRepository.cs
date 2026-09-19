@@ -85,5 +85,11 @@ namespace YashfeenMedical.DAL.Repositories
 
             return patientAppointments;
         }
+
+        public IQueryable<Appointment> GetDoctorAppointments(int doctorId)
+        {
+            var result = SelectQuery.Where(a => a.DoctorId == doctorId);
+            return result;
+        }
     }
 }

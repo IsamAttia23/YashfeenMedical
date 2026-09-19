@@ -18,6 +18,7 @@ using YashfeenMedical.Infrastructure.FileStorage;
 using YashfeenMedical.Infrastructure.UsersManagment;
 using Microsoft.EntityFrameworkCore;
 using dal = YashfeenMedical.DAL;
+using YashfeenMedical.BLL.DTOs.Appointments;
 
 namespace YashfeenMedical.BLL.Services
 {
@@ -117,6 +118,40 @@ namespace YashfeenMedical.BLL.Services
             var availableSlots = GetAvailableSlots(bookedSet, schedule);
 
             return SetAvailableSlotsDateRange(availableSlots, date);
+        }
+
+        public async Task<TPaginationQueryModel<AppointmentDto>> GetDoctorAppointments(int doctorId, PaginationQuery paginationQuery)
+        {
+            var doctor = await Details(doctorId);
+
+            var appointment = _unitOfWork.Appointments.GetDoctorAppointments(doctorId);
+            var appointmentDtos = appointment.ProjectToType<AppointmentDto>();
+
+            var paggedList = await _paginationServices.GetPaggedList(appointmentDtos, paginationQuery);
+
+            return paggedList;
+        }
+
+        public async Task<DoctorScheduleDto> UpsertSchedule(int doctorId, DoctorScheduleUpdateDto doctorSchedule)
+        {
+            var doctor = await Details(doctorId);
+
+            var schdeule = await _unitOfWork.DoctorSchedules.GetById(doctorSchedule.Id);
+
+            if (schdeule == null)
+            {
+                var newSchedule = _mapper.Map<DoctorSchedule>(doctorSchedule);
+                newSchedule.DoctorId = doctorId;
+                await _unitOfWork.DoctorSchedules.Add(newSchedule);
+                await _unitOfWork.SaveChangesAsync();
+                return _mapper.Map<DoctorScheduleDto>(newSchedule);
+            }
+            else
+            {
+                await _unitOfWork.DoctorSchedules.Update(schdeule);
+                await _unitOfWork.SaveChangesAsync();
+                return _mapper.Map<DoctorScheduleDto>(schdeule);
+            };
         }
 
         private async Task<string?> SetProfilePhoto(Doctor patient, IFormFile profilePhoto)
@@ -253,7 +288,7 @@ namespace YashfeenMedical.BLL.Services
         }
         private async Task<List<TimeOnly>> GetBookedTimes(int doctorId, DateOnly date)
         {
-            var appointments = _unitOfWork.AppointmentRepository.GetAll();
+            var appointments = _unitOfWork.Appointments.GetAll();
 
             var bookedStatuses = new[]
            {
@@ -312,5 +347,7 @@ namespace YashfeenMedical.BLL.Services
             if (bookedTimes.Count >= schedule.MaxAppointmentsPerDay)
                 throw new BadRequestException("this doctor has reached the Max Appointments Per Day");
         }
+
+
     }
 }
