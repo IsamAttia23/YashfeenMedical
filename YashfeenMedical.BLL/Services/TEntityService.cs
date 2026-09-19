@@ -58,7 +58,7 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
     public virtual async Task<TPaginationQueryModel<TDto>> GetAll(PaginationQuery query)
     {
-        var entities = await _repository.GetAll();
+        var entities =  _repository.GetAll();
 
         var result = await _paginationServices.GetPaggedList(entities.ProjectToType<TDto>(), query);
 

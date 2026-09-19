@@ -9,6 +9,7 @@ namespace YashfeenMedical.DAL.Enums
         Scheduled,
         Confirmed,
         InProgress,
+        Pending,
         Completed,
         Cancelled,
         NoShow

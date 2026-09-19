@@ -57,7 +57,7 @@ namespace YashfeenMedical.DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IQueryable<TEntity>> GetAll()
+        public  IQueryable<TEntity> GetAll()
         {
             return FinalQuery;
         }

@@ -43,6 +43,14 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{id}/available-slots")]
+        public async Task<IActionResult> GetAvailableSlots(int id,DateOnly date)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            var result = await _services.GetDoctorScheduleOnDayAsync(id, date);
+            return Ok(result);
+        }
     }
 }

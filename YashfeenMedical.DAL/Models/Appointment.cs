@@ -19,7 +19,7 @@ namespace YashfeenMedical.DAL.Models
         public Doctor Doctor { get; set; }
 
         [Required]
-        public DateTimeOffset AppointmentDate { get; set; }
+        public DateOnly AppointmentDate { get; set; }
 
         [Required]
         public TimeOnly StartTime { get; set; }

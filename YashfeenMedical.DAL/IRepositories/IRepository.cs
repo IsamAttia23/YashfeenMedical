@@ -9,7 +9,7 @@ namespace YashfeenMedical.DAL.IRepositories
         where TEntity : class
         where TId : struct
     {
-        Task<IQueryable<TEntity>> GetAll();
+        IQueryable<TEntity> GetAll();
         Task<TEntity?> GetById(TId id);
         Task Add(TEntity entity);
         Task Delete(TId id);

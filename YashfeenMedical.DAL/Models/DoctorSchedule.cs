@@ -24,6 +24,7 @@ namespace YashfeenMedical.DAL.Models
         public TimeOnly EndTime { get; set; }
 
         [Required]
+        [Range(1, 1440)]
         public int SlotDurationMinutes { get; set; }
 
         [Required]

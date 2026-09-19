@@ -101,21 +101,22 @@ namespace YashfeenMedical.BLL.Services
             return paggedList;
         }
 
-        public async Task<List<AvailableSlotDto>> GetDoctorScheduleOnDayAsync(int doctorId, DateTimeOffset date)
+        public async Task<List<AvailableSlotDto>> GetDoctorScheduleOnDayAsync(int doctorId, DateOnly date)
         {
             CheckDate(date);
 
-            var dayOfWeek = (dal.Enums.ScheduleDayOfWeek)date.DayOfWeek;
             var schedule = await CheckActiveSchedule(doctorId, date);
             var bookedTimes = await GetBookedTimes(doctorId, date);
 
-            var slots = GetAvailableSlots(bookedTimes, schedule);
-
             CheckMaxAppointmentsPerDay(bookedTimes, schedule);
 
-            var availableSlots = SetAvailableSlotsDateRange(slots, date);
+            var bookedSet = bookedTimes.ToHashSet();
 
-            return availableSlots;
+
+
+            var availableSlots = GetAvailableSlots(bookedSet, schedule);
+
+            return SetAvailableSlotsDateRange(availableSlots, date);
         }
 
         private async Task<string?> SetProfilePhoto(Doctor patient, IFormFile profilePhoto)
@@ -228,9 +229,9 @@ namespace YashfeenMedical.BLL.Services
             return result;
         }
 
-        private async Task<DoctorSchedule> CheckActiveSchedule(int doctorId, DateTimeOffset date)
+        private async Task<DoctorSchedule> CheckActiveSchedule(int doctorId, DateOnly date)
         {
-            var dayOfWeek = (dal.Enums.ScheduleDayOfWeek)date.DayOfWeek;
+            var dayOfWeek = (ScheduleDayOfWeek)date.DayOfWeek;
 
             var schedule = await _unitOfWork.DoctorSchedules
                 .GetByDoctorAndDayAsync(doctorId, dayOfWeek);
@@ -242,52 +243,65 @@ namespace YashfeenMedical.BLL.Services
 
             return schedule;
         }
-        private void CheckDate(DateTimeOffset date)
+        private void CheckDate(DateOnly date)
         {
-            if (date < DateTimeOffset.UtcNow)
-                throw new BadRequestException("cannot display available times for a past date");
+            var today = DateOnly.FromDateTime(DateTime.Now.Date);
+
+            if (date < today)
+                throw new BadRequestException(
+                    "Cannot display available times for a past date.");
         }
-        private async Task<List<TimeOnly>> GetBookedTimes(int doctorId, DateTimeOffset date)
+        private async Task<List<TimeOnly>> GetBookedTimes(int doctorId, DateOnly date)
         {
-            var appointments = await _unitOfWork.AppointmentRepository.GetAll();
+            var appointments = _unitOfWork.AppointmentRepository.GetAll();
+
+            var bookedStatuses = new[]
+           {
+             AppointmentStatus.Pending,
+             AppointmentStatus.Confirmed,
+             AppointmentStatus.InProgress
+            };
+
 
             var bookedTimes = await appointments.Where(a => a.DoctorId == doctorId
-             && a.AppointmentDate == date
-             && a.Status != AppointmentStatus.Cancelled
-             && a.Status != AppointmentStatus.NoShow)
+           && a.AppointmentDate == date
+           && bookedStatuses.Contains(a.Status))
              .Select(a => a.StartTime)
              .ToListAsync();
 
             return bookedTimes;
         }
-        private List<AvailableSlotDto> GetAvailableSlots(List<TimeOnly> bookedTimes, DoctorSchedule schedule)
+        private List<AvailableSlotDto> GetAvailableSlots(HashSet<TimeOnly> bookedTimes, DoctorSchedule schedule)
         {
-            var slots = new List<TimeOnly>();
+            var result = new List<AvailableSlotDto>();
+
             var current = schedule.StartTime;
 
-            while (current.Add(TimeSpan.FromMinutes(schedule.SlotDurationMinutes)) <= schedule.EndTime)
+            while (current.AddMinutes(schedule.SlotDurationMinutes)
+                          <= schedule.EndTime)
             {
-                slots.Add(current);
-                current = current.AddMinutes(schedule.SlotDurationMinutes);
+                if (!bookedTimes.Contains(current))
+                {
+                    result.Add(new AvailableSlotDto
+                    {
+                        StartTime = current,
+                        EndTime = current.AddMinutes(
+                            schedule.SlotDurationMinutes),
+                        IsAvailable = true
+                    });
+                }
+
+                current = current.AddMinutes(
+                    schedule.SlotDurationMinutes);
             }
 
-            var availableSlots = slots
-           .Where(s => !bookedTimes.Contains(s))
-           .Select(s => new AvailableSlotDto
-           {
-               StartTime = s,
-               EndTime = s.AddMinutes(schedule.SlotDurationMinutes),
-               IsAvailable = true
-           })
-           .ToList();
-
-            return availableSlots;
+            return result;
         }
-        private List<AvailableSlotDto> SetAvailableSlotsDateRange(List<AvailableSlotDto> availableSlots, DateTimeOffset date)
+        private List<AvailableSlotDto> SetAvailableSlotsDateRange(List<AvailableSlotDto> availableSlots, DateOnly date)
         {
-            if (date == DateTimeOffset.Now)
+            if (date == DateOnly.FromDateTime(DateTime.Now.Date))
             {
-                var now = TimeOnly.FromDateTime(DateTime.UtcNow);
+                var now = TimeOnly.FromDateTime(DateTime.Now);
                 availableSlots = availableSlots.Where(s => s.StartTime > now).ToList();
             }
 
