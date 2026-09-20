@@ -157,7 +157,7 @@ namespace YashfeenMedical.BLL.Services
             ;
         }
 
-        public async Task<string> TogglePatientActivitiy(int doctorId)
+        public async Task<string> ToggleDoctorActivitiy(int doctorId)
         {
             var doctor = await _repository.GetById(doctorId);
 
@@ -175,7 +175,7 @@ namespace YashfeenMedical.BLL.Services
             }
         }
 
-        public async Task<bool> UploadPatientPhoto(int doctorId, IFormFile ProfilePhoto)
+        public async Task<bool> UploadDoctorPhoto(int doctorId, IFormFile ProfilePhoto)
         {
 
             {
@@ -395,9 +395,7 @@ namespace YashfeenMedical.BLL.Services
 
             if (creationDto.ProfilePhoto != null)
             {
-                profilePicturePath = await SetProfilePhoto(
-                    doctor,
-                    creationDto.ProfilePhoto);
+                profilePicturePath = await SetProfilePhoto(doctor, creationDto.ProfilePhoto);
             }
 
             doctor.UserId = user.Id;

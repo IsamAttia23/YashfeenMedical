@@ -17,8 +17,8 @@ namespace YashfeenMedical.BLL.IServices
         Task<TPaginationQueryModel<DoctorScheduleDto>> GetDoctorSchedule(int doctorId, PaginationQuery paginationQuery);
         Task<TPaginationQueryModel<AppointmentDto>> GetDoctorAppointments(int doctorId, PaginationQuery paginationQuery);
         Task<DoctorScheduleDto> UpsertSchedule(int doctorId, DoctorScheduleUpdateDto doctorSchedule);
-        Task<string> TogglePatientActivitiy(int doctorId);
-        Task<bool> UploadPatientPhoto(int doctorId, IFormFile ProfilePhoto);
+        Task<string> ToggleDoctorActivitiy(int doctorId);
+        Task<bool> UploadDoctorPhoto(int doctorId, IFormFile ProfilePhoto);
         Task<List<AvailableSlotDto>> GetDoctorScheduleOnDayAsync(int doctorId, DateOnly date);
     }
 }

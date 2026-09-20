@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YashfeenMedical.BLL.DTOs.Doctors;
+using YashfeenMedical.BLL.DTOs.DoctorSchedules;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.BLL.Services;
 using YashfeenMedical.DAL.QueryModels;
@@ -26,7 +27,7 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpPost]
-        public async  Task<IActionResult> CreateAsync(DoctorCreationDto creationDto)
+        public async Task<IActionResult> CreateAsync(DoctorCreationDto creationDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -36,15 +37,15 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpGet("{id}/schedule")]
-        public async Task<IActionResult> GetDoctorScheduleAsync(int doctorId,PaginationQuery paginationQuery)
+        public async Task<IActionResult> GetDoctorScheduleAsync(int id, PaginationQuery paginationQuery)
         {
-            var result = await _services.GetDoctorSchedule(doctorId, paginationQuery);
+            var result = await _services.GetDoctorSchedule(id, paginationQuery);
 
             return Ok(result);
         }
 
         [HttpGet("{id}/available-slots")]
-        public async Task<IActionResult> GetAvailableSlots(int id,DateOnly date)
+        public async Task<IActionResult> GetAvailableSlots(int id, DateOnly date)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -54,26 +55,26 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpPost("{id}/schedule")]
-        public async Task<IActionResult> GetDoctorSchedule(int id, PaginationQuery paginationQuery)
+        public async Task<IActionResult> UpsertDoctorSchedule(int id, DoctorScheduleUpdateDto updateDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _services.GetDoctorSchedule(id, paginationQuery);
+            var result = await _services.UpsertSchedule(id, updateDto);
             return Ok(result);
         }
 
         [HttpPatch("{id}/toggle-activity")]
-        public async Task<IActionResult> TogglePatientActivity(int id)
+        public async Task<IActionResult> ToggleDoctorActivity(int id)
         {
-            var result = await _services.TogglePatientActivitiy(id);
+            var result = await _services.ToggleDoctorActivitiy(id);
             return Ok(result);
         }
 
         [HttpPost("{id}/Photo")]
         public async Task<IActionResult> UploadPatientPhoto(int id, IFormFile profilePhoto)
         {
-            var result = await _services.UploadPatientPhoto(id, profilePhoto);
+            var result = await _services.UploadDoctorPhoto(id, profilePhoto);
             return Ok("Patient photo uploaded successfully.");
         }
     }

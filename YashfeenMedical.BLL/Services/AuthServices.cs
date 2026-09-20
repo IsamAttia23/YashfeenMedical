@@ -151,16 +151,18 @@ namespace YashfeenMedical.BLL.Services
             var mappedPatient = _mapper.Map<Patient>(creationDto);
 
             string? profilePicturePath = null;
-            if (creationDto.ProfilePicture != null)
-            {
-
-                profilePicturePath = await _fileStorageService.SaveProfilePhoto(creationDto.ProfilePicture, "patients");
-            }
+           
 
             await _unitOfWork.BeginTransactionAsync();
 
             try
             {
+                if (creationDto.ProfilePicture != null)
+                {
+
+                    profilePicturePath = await _fileStorageService.SaveProfilePhoto(creationDto.ProfilePicture, "patients");
+                }
+
                 var user = new ApplicationUser
                 {
                     UserName = creationDto.UserName,
