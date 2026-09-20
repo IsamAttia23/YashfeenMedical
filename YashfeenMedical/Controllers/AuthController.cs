@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YashfeenMedical.BLL.DTOs.Auth;
 using YashfeenMedical.BLL.DTOs.Patients;
 using YashfeenMedical.BLL.IServices;
 
 namespace YashfeenMedical.API.Controllers
-{
+{ 
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
