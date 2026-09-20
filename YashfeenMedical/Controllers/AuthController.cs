@@ -6,6 +6,7 @@ using YashfeenMedical.BLL.IServices;
 
 namespace YashfeenMedical.API.Controllers
 {
+    [Authorize("")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
