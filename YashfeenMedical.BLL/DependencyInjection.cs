@@ -30,6 +30,7 @@ namespace YashfeenMedical.BLL
             services.AddScoped<IPatientServices, PatientServices>();
             services.AddScoped<IDoctorServices, DoctorServices>();
             services.AddScoped<ISpecialtyServices, SpecialtyServices>();
+            services.AddScoped<IAppointmentServices, AppointmentServices>();
 
             return services;
         }
