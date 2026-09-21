@@ -1,9 +1,12 @@
 ﻿using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
+using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Doctors;
 using YashfeenMedical.BLL.DTOs.DoctorSchedules;
 using YashfeenMedical.BLL.DTOs.Patients;
@@ -16,9 +19,7 @@ using YashfeenMedical.DAL.Repositories;
 using YashfeenMedical.Infrastructure.Exceptions;
 using YashfeenMedical.Infrastructure.FileStorage;
 using YashfeenMedical.Infrastructure.UsersManagment;
-using Microsoft.EntityFrameworkCore;
 using dal = YashfeenMedical.DAL;
-using YashfeenMedical.BLL.DTOs.Appointments;
 
 namespace YashfeenMedical.BLL.Services
 {
@@ -68,7 +69,8 @@ namespace YashfeenMedical.BLL.Services
             {
                 var user = await CreateDoctorUserAsync(creationDto);
 
-                var doctor = await CreateDoctorAsync(creationDto, user, profilePicturePath);
+                var (doctor, uploadedProfilePicturePath) = await CreateDoctorAsync(creationDto, user);
+                profilePicturePath = uploadedProfilePicturePath;
 
                 await _unitOfWork.Doctors.Add(doctor);
                 await _unitOfWork.SaveChangesAsync();
@@ -190,7 +192,7 @@ namespace YashfeenMedical.BLL.Services
                 {
                     if (ProfilePhoto != null)
                     {
-                        profilePicturePath = await SetProfilePhoto(doctor, ProfilePhoto);
+                        profilePicturePath = await _fileStorageService.SaveProfilePhoto(ProfilePhoto, "doctors");
                     }
 
                     await _repository.Update(doctor);
@@ -232,6 +234,8 @@ namespace YashfeenMedical.BLL.Services
 
             var oldProfilePicturePath = doctor.ProfilePhotoUrl;
             string? newPofilePicturePath = null;
+
+
 
             await _unitOfWork.BeginTransactionAsync();
 
@@ -387,11 +391,11 @@ namespace YashfeenMedical.BLL.Services
 
             return user;
         }
-        private async Task<Doctor> CreateDoctorAsync(DoctorCreationDto creationDto, ApplicationUser user, string? profilePicturePath)
+        private async Task<(Doctor, string? profilePicturePath)> CreateDoctorAsync(DoctorCreationDto creationDto, ApplicationUser user)
         {
             var doctor = _mapper.Map<Doctor>(creationDto);
 
-            profilePicturePath = null;
+            string? profilePicturePath = null;
 
             if (creationDto.ProfilePhoto != null)
             {
@@ -404,7 +408,7 @@ namespace YashfeenMedical.BLL.Services
             doctor.Specialties =
                 await GetDoctorSpecialties(creationDto.Specialties);
 
-            return doctor;
+            return (doctor, profilePicturePath);
         }
         private DoctorDto MapDoctorToDto(Doctor doctor, string? profilePicturePath)
         {

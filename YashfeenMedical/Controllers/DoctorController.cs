@@ -29,9 +29,6 @@ namespace YashfeenMedical.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(DoctorCreationDto creationDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var result = await Add(creationDto);
             return CreatedAtAction(nameof(Details), new { id = result.Id }, result);
         }
