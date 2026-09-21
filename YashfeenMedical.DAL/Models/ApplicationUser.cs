@@ -9,6 +9,7 @@ namespace YashfeenMedical.DAL.Models
     {
         public bool IsActive { get; set; }
         public DateTimeOffset LastLogin { get; set; }
+        public DateTimeOffset? LastInvalidLoginAttempt { get; set; }
         public IList<RefreshToken>? RefreshTokens { get; set; }
         public DateTimeOffset RefreshTokenExpiresAt { get; set; }
         public DateTimeOffset CreatedOn { get; set; }

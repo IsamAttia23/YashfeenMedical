@@ -74,8 +74,14 @@ namespace YashfeenMedical.BLL.Services
             var authDto = new AuthDto();
             var user = await _userManagmentServices.FindUserByEmailAsync(loginDto.Email);
 
-            if (user is null || !await _userManagmentServices.CheckPasswordAsync(user, loginDto.Password))
+            if (user is null)
             {
+                throw new NotFoundException("incorrect user or password");
+            }
+
+            if(!await _userManagmentServices.CheckPasswordAsync(user, loginDto.Password))
+            {
+                await SetLastInvalidLoginAttempt(user);
                 throw new NotFoundException("incorrect user or password");
             }
 
@@ -92,6 +98,7 @@ namespace YashfeenMedical.BLL.Services
             authDto.UserName = user.UserName;
             authDto.Roles = rolesList.ToList();
             authDto.LastLogin = user.LastLogin;
+            authDto.LastInvalidLoginAttempt = user.LastInvalidLoginAttempt;
 
             await SetLastLogin(user);
 
@@ -216,6 +223,11 @@ namespace YashfeenMedical.BLL.Services
         private async Task SetLastLogin(ApplicationUser user)
         {
             user.LastLogin = DateTimeOffset.UtcNow;
+            await _userManagmentServices.UpdateUserAsync(user);
+        }
+        private async Task SetLastInvalidLoginAttempt(ApplicationUser user)
+        {
+            user.LastInvalidLoginAttempt = DateTimeOffset.UtcNow;
             await _userManagmentServices.UpdateUserAsync(user);
         }
     }
