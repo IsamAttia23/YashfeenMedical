@@ -32,6 +32,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
@@ -44,6 +45,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPost("logout")]
         public async Task<IActionResult> LogouAsync()
         {
@@ -62,6 +64,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize]
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDto passwordDto)
         {
