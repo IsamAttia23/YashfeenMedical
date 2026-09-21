@@ -79,11 +79,10 @@ namespace YashfeenMedical.BLL.Services
                 throw new NotFoundException("incorrect user or password");
             }
 
-            if(user.IsActive == false)
+            if (user.IsActive == false)
             {
                 throw new ForbiddenException("this account is not active");
             }
-
 
             var rolesList = await _userManagmentServices.GetUserRoles(user);
             var jwtSecurityToken = await _jwtService.GenerateAccessToken(user);
@@ -92,6 +91,9 @@ namespace YashfeenMedical.BLL.Services
             authDto.Email = loginDto.Email;
             authDto.UserName = user.UserName;
             authDto.Roles = rolesList.ToList();
+            authDto.LastLogin = user.LastLogin;
+
+            await SetLastLogin(user);
 
             await AssignRefreshTokenToUser(user, authDto);
 
@@ -151,7 +153,7 @@ namespace YashfeenMedical.BLL.Services
             var mappedPatient = _mapper.Map<Patient>(creationDto);
 
             string? profilePicturePath = null;
-           
+
 
             await _unitOfWork.BeginTransactionAsync();
 
@@ -209,6 +211,12 @@ namespace YashfeenMedical.BLL.Services
                 result.ProfilePhotoUrl = _fileStorageService.GenerateSignedUrl(profilePicturePath, TimeSpan.FromHours(1));
 
             return result;
+        }
+
+        private async Task SetLastLogin(ApplicationUser user)
+        {
+            user.LastLogin = DateTimeOffset.UtcNow;
+            await _userManagmentServices.UpdateUserAsync(user);
         }
     }
 }

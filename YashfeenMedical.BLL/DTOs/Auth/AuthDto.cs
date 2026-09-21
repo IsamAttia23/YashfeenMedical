@@ -11,6 +11,7 @@ namespace YashfeenMedical.BLL.DTOs.Auth
         public string Email { get; set; }
         public List<string> Roles { get; set; }
         public string Token { get; set; }
+        public DateTimeOffset LastLogin { get; set; }
 
         [JsonIgnore]
         public string RefreshToken { get; set; }

@@ -32,7 +32,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+        [Authorize("")]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
