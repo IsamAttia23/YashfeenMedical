@@ -5,8 +5,9 @@ namespace YashfeenMedical.DAL.IRepositories
 {
     public interface IAppointmentRepository : IRepository<Appointment, int>
     {
-        IQueryable<Appointment> GetPatientAppointmentsAsync(int patientId);
-        IQueryable<Appointment> GetFilterdAppointmentsAsync(PatientAppointmentsQueryModel queryModel, IQueryable<Appointment> patientAppointments);
+        IQueryable<Appointment> GetPatientAppointments(int patientId);
+        IQueryable<Appointment> GetFilterdAppointments(AppointmentQueryModel queryModel, IQueryable<Appointment> patientAppointments);
         IQueryable<Appointment> GetDoctorAppointments(int doctorId);
+        IQueryable<Appointment> BringAppointmentsToday(DateOnly date);
     }
 }

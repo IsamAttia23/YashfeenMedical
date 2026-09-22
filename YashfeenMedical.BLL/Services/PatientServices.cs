@@ -75,8 +75,8 @@ namespace YashfeenMedical.BLL.Services
 
         public async Task<TPaginationQueryModel<AppointmentDto>> GetPaitentAppointments(PatientAppointmentsQueryModel queryModel, int paitentId)
         {
-            var patientAppointments = _appointmentRepository.GetPatientAppointmentsAsync(paitentId);
-            var filterdAppointments = _appointmentRepository.GetFilterdAppointmentsAsync(queryModel, patientAppointments);
+            var patientAppointments = _appointmentRepository.GetPatientAppointments(paitentId);
+            var filterdAppointments = _appointmentRepository.GetFilterdAppointments(queryModel, patientAppointments);
             var mappedAppointments = filterdAppointments.ProjectToType<AppointmentDto>();
 
             var paggedList = await _paginationServices.GetPaggedList(mappedAppointments, queryModel);

@@ -18,38 +18,44 @@ namespace YashfeenMedical.DAL.Repositories
             _context = context;
         }
 
-        public IQueryable<Appointment> GetPatientAppointmentsAsync(int patientId)
+        public IQueryable<Appointment> GetPatientAppointments(int patientId)
         {
-            var result =  SelectQuery.Where(a => a.PatientId == patientId);
-            return  result;
+            var result = SelectQuery.Where(a => a.PatientId == patientId);
+            return result;
         }
 
-        public IQueryable<Appointment> GetFilterdAppointmentsAsync(PatientAppointmentsQueryModel queryModel,
-            IQueryable<Appointment> patientAppointments)
+        public IQueryable<Appointment> GetFilterdAppointments(AppointmentQueryModel queryModel, IQueryable<Appointment> appointments)
         {
             if (queryModel.Status.HasValue)
             {
-                patientAppointments = patientAppointments.Where(a =>
+                appointments = appointments.Where(a =>
                     a.Status == queryModel.Status.Value);
+            }
+
+            //Patient
+            if (queryModel.PatientId.HasValue)
+            {
+                appointments = appointments.Where(a =>
+                   a.PatientId == queryModel.PatientId.Value);
             }
 
             // Doctor
             if (queryModel.DoctorId.HasValue)
             {
-                patientAppointments = patientAppointments.Where(a =>
+                appointments = appointments.Where(a =>
                     a.DoctorId == queryModel.DoctorId.Value);
             }
 
             // Appointment Type
             if (queryModel.Type.HasValue)
             {
-                patientAppointments = patientAppointments.Where(a =>
+                appointments = appointments.Where(a =>
                     a.Type == queryModel.Type.Value);
             }
 
             if (queryModel.DateFrom.HasValue)
             {
-                patientAppointments = patientAppointments.Where(a =>
+                appointments = appointments.Where(a =>
                     a.AppointmentDate <= queryModel.DateFrom.Value);
             }
 
@@ -58,7 +64,7 @@ namespace YashfeenMedical.DAL.Repositories
             {
                 var search = queryModel.SearchTerm.Trim();
 
-                patientAppointments = patientAppointments.Where(a =>
+                appointments = appointments.Where(a =>
                     a.Doctor.FullName.Contains(search) ||
                     a.Patient.FullName.Contains(search));
             }
@@ -66,29 +72,35 @@ namespace YashfeenMedical.DAL.Repositories
             // Sorting
             var sortBy = queryModel.SortBy?.ToLower();
 
-            patientAppointments = sortBy switch
+            appointments = sortBy switch
             {
                 "date" => queryModel.SortDirection == SortDirection.Descending
-                    ? patientAppointments.OrderByDescending(a => a.AppointmentDate)
-                    : patientAppointments.OrderBy(a => a.AppointmentDate),
+                    ? appointments.OrderByDescending(a => a.AppointmentDate)
+                    : appointments.OrderBy(a => a.AppointmentDate),
 
                 "status" => queryModel.SortDirection == SortDirection.Descending
-                    ? patientAppointments.OrderByDescending(a => a.Status)
-                    : patientAppointments.OrderBy(a => a.Status),
+                    ? appointments.OrderByDescending(a => a.Status)
+                    : appointments.OrderBy(a => a.Status),
 
                 "type" => queryModel.SortDirection == SortDirection.Descending
-                    ? patientAppointments.OrderByDescending(a => a.Type)
-                    : patientAppointments.OrderBy(a => a.Type),
+                    ? appointments.OrderByDescending(a => a.Type)
+                    : appointments.OrderBy(a => a.Type),
 
-                _ => patientAppointments.OrderBy(a => a.AppointmentDate)
+                _ => appointments.OrderBy(a => a.AppointmentDate)
             };
 
-            return patientAppointments;
+            return appointments;
         }
 
         public IQueryable<Appointment> GetDoctorAppointments(int doctorId)
         {
             var result = SelectQuery.Where(a => a.DoctorId == doctorId);
+            return result;
+        }
+
+        public IQueryable<Appointment> BringAppointmentsToday(DateOnly date)
+        {
+            var result = SelectQuery.Where(a => a.AppointmentDate == date);
             return result;
         }
     }

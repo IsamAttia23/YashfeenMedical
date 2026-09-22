@@ -5,16 +5,11 @@ using YashfeenMedical.DAL.Enums;
 
 namespace YashfeenMedical.DAL.QueryModels
 {
-    public class PatientAppointmentsQueryModel : PaginationQuery
+    public class PatientAppointmentsQueryModel : AppointmentQueryModel
     {
-        public AppointmentStatus? Status { get; set; }
-
-        public DateOnly? DateFrom { get; set; }
-
-        public DateOnly? DateTo { get; set; }
-
-        public int? DoctorId { get; set; }
-
-        public AppointmentType? Type { get; set; }
+        public PatientAppointmentsQueryModel()
+        {
+            SortDirection = Enums.SortDirection.Descending;
+        }
     }
 }
