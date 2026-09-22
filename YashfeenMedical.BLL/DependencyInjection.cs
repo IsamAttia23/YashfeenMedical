@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Text;
 using YashfeenMedical.BLL.AutoMapper;
 using YashfeenMedical.BLL.IServices;
+using YashfeenMedical.BLL.IStateMachines;
 using YashfeenMedical.BLL.Services;
+using YashfeenMedical.BLL.StateMachines;
 using YashfeenMedical.DAL;
 using YashfeenMedical.Infrastructure;
 
@@ -25,6 +27,7 @@ namespace YashfeenMedical.BLL
             services.AddDalServices(configuration);
             services.AddInfrastructureServices(configuration);
             services.AddScoped<IPaginationServices, PaginationServices>();
+            services.AddScoped<IAppointmentStateMachine, AppointmentStateMachine>();
 
             services.AddScoped<IAuthServices,AuthServices>();
             services.AddScoped<IPatientServices, PatientServices>();
