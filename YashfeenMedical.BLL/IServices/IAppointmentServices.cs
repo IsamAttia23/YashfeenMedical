@@ -11,6 +11,6 @@ namespace YashfeenMedical.BLL.IServices
     {
         Task<TPaginationQueryModel<AppointmentDto>> GetFilterdAppointmentsAsync(AppointmentQueryModel queryModel);
 
-        Task<TPaginationQueryModel<AppointmentDto>> BringAppointmentsTodayAsync(AppointmentQueryModel queryModel, DateOnly date);
+        Task<TPaginationQueryModel<AppointmentDto>> BringAppointmentsTodayAsync(AppointmentQueryModel queryModel);
     }
 }

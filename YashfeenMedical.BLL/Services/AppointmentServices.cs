@@ -29,9 +29,9 @@ namespace YashfeenMedical.BLL.Services
             _paginationServices = paginationServices;
         }
 
-        public async Task<TPaginationQueryModel<AppointmentDto>> BringAppointmentsTodayAsync(AppointmentQueryModel queryModel, DateOnly date)
+        public async Task<TPaginationQueryModel<AppointmentDto>> BringAppointmentsTodayAsync(AppointmentQueryModel queryModel)
         {
-            var appointmentsToday = _unitOfWork.Appointments.BringAppointmentsToday(date);
+            var appointmentsToday = _unitOfWork.Appointments.BringAppointmentsToday(DateOnly.FromDateTime(DateTime.Now));
             var filteredAppointments = _unitOfWork.Appointments.GetFilterdAppointments(queryModel, appointmentsToday);
             var appointmentDtos = filteredAppointments.ProjectToType<AppointmentDto>();
 
@@ -83,6 +83,7 @@ namespace YashfeenMedical.BLL.Services
                 throw new InternalServerErorrException("Error occurred while creating the appointment.");
             }
         }
+
         private async Task ValidatePatientAsync(int patientId)
         {
             var patient = await _unitOfWork.Patients.IsExists(patientId);
