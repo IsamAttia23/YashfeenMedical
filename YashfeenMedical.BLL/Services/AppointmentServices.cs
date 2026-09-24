@@ -61,6 +61,8 @@ namespace YashfeenMedical.BLL.Services
             {
                 var appointment = _mapper.Map<Appointment>(creatiomDto);
 
+                appointment.Status = AppointmentStatus.Scheduled;
+
                 await _unitOfWork.Appointments.Add(appointment);
                 await _unitOfWork.SaveChangesAsync(); 
 
@@ -235,11 +237,6 @@ namespace YashfeenMedical.BLL.Services
         private string GenerateInvoiceNumber(Appointment appointment)
         {
             return $"INV-{appointment.AppointmentDate:yyyyMMdd}-{appointment.Id}";
-        }
-
-        private int GetSlotDuration(AppointmentCreationDto dto)
-        {
-            return 30;
         }
     }
 }

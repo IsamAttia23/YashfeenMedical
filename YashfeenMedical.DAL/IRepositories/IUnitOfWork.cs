@@ -13,6 +13,7 @@ namespace YashfeenMedical.DAL.IRepositories
         IDoctorScheduleRepository DoctorSchedules { get; } 
         IAppointmentRepository Appointments { get; }
         IInvoiceRepository Invoices { get; }
+        IMedicalRecordRepository MedicalRecords { get; }
 
         Task<int> SaveChangesAsync();
 

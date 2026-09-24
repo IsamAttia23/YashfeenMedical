@@ -18,11 +18,12 @@ namespace YashfeenMedical.DAL.Repositories
         public IDoctorScheduleRepository DoctorSchedules { get; }
         public IAppointmentRepository Appointments { get; }
         public IInvoiceRepository Invoices { get; }
+        public IMedicalRecordRepository MedicalRecords { get; }
 
         public UnitOfWork(ApplicationDbContext context, IPatientRepository patientRepository
             , IDoctorRepository doctorRepository, ISpecialtyRepository specialtyRepository
-            ,IDoctorScheduleRepository doctorSchedule, IAppointmentRepository appointmentRepository
-            ,IInvoiceRepository invoiceRepository)
+            , IDoctorScheduleRepository doctorSchedule, IAppointmentRepository appointmentRepository
+            , IInvoiceRepository invoiceRepository, IMedicalRecordRepository medicalRecordRepository)
         {
             _context = context;
             Patients = patientRepository;
@@ -31,6 +32,7 @@ namespace YashfeenMedical.DAL.Repositories
             DoctorSchedules = doctorSchedule;
             Appointments = appointmentRepository;
             Invoices = invoiceRepository;
+            MedicalRecords = medicalRecordRepository;
         }
 
         public async Task<int> SaveChangesAsync() => await _context.SaveChangesAsync();

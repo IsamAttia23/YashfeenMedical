@@ -18,9 +18,9 @@ namespace YashfeenMedical.BLL.DTOs.Appointments
 
         public TimeOnly EndTime { get; set; }
 
-        public AppointmentStatus Status { get; set; }
+        public string Status { get; set; }
 
-        public AppointmentType Type { get; set; }
+        public string Type { get; set; }
 
         public string ReasonForVisit { get; set; }
 

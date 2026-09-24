@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using YashfeenMedical.BLL.DTOs.Appointments;
+using YashfeenMedical.BLL.DTOs.MedicalRecords;
 using YashfeenMedical.BLL.IServices;
+using YashfeenMedical.BLL.IStateMachines;
 using YashfeenMedical.DAL.QueryModels;
 
 namespace YashfeenMedical.API.Controllers
@@ -11,10 +13,12 @@ namespace YashfeenMedical.API.Controllers
     public class AppointmentController : BaseController<int, IAppointmentServices, AppointmentDto, AppointmentCreationDto, AppointmentUpdateDto>
     {
         private readonly IAppointmentServices _appointmentServices;
+        private readonly IAppointmentStateMachine _stateMachine;
 
-        public AppointmentController(IAppointmentServices services) : base(services)
+        public AppointmentController(IAppointmentServices services, IAppointmentStateMachine stateMachine) : base(services)
         {
             _appointmentServices = services;
+            _stateMachine = stateMachine;
         }
 
         [HttpGet]
@@ -34,11 +38,35 @@ namespace YashfeenMedical.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(AppointmentCreationDto creationDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await Add(creationDto);
             return CreatedAtAction(nameof(Details), new { id = result.Id }, result);
+        }
+
+        [HttpPut("{id}/confirm")]
+        public async Task<IActionResult> ConfirmAppointmentAsync(int id)
+        {
+            var result = await _stateMachine.ConfirmAppointmentAsync(id);
+            return Ok(result);
+
+        }
+
+        [HttpPut("{id}/start")]
+        public async Task<IActionResult> StartAppointmentAsync(int id)
+        {
+            var result = await _stateMachine.StartAppointmentAsync(id);
+            return Ok(result);
+
+        }
+
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> CompleteAppointmentAsync(int id,MedicalRecordCreationDto medicalRecord)
+        {
+            var result = await _stateMachine.CompleteAppointmentAsync(id,medicalRecord);
+            return Ok(result);
+
         }
     }
 }

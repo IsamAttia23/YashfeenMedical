@@ -5,7 +5,6 @@ using System.Text;
 using YashfeenMedical.BLL.DTOs.Users;
 using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.Shared.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace YashfeenMedical.BLL.DTOs.Patients
 {
