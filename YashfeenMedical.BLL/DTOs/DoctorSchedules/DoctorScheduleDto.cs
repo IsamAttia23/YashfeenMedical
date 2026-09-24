@@ -9,7 +9,7 @@ namespace YashfeenMedical.BLL.DTOs.DoctorSchedules
 
         public int DoctorId { get; set; }
 
-        public DayOfWeek DayOfWeek { get; set; }
+        public string DayOfWeek { get; set; }
 
         public TimeOnly StartTime { get; set; }
 

@@ -18,10 +18,5 @@ namespace YashfeenMedical.BLL.DTOs.DoctorSchedules
 
         [Required]
         public int SlotDurationMinutes { get; set; }
-
-        [Required]
-        public int MaxAppointmentsPerDay { get; set; }
-
-        public bool IsActive { get; set; } = true;
     }
 }

@@ -22,6 +22,7 @@ namespace YashfeenMedical.BLL
             TypeAdapterConfig.GlobalSettings.Scan(typeof(DoctorMapper).Assembly);
             TypeAdapterConfig.GlobalSettings.Scan(typeof(SpecialtyMapper).Assembly);
             TypeAdapterConfig.GlobalSettings.Scan(typeof(AppointmentMapper).Assembly);
+            TypeAdapterConfig.GlobalSettings.Scan(typeof(DoctorScheduleMapper).Assembly);
 
             services.AddMapster();
             services.AddDalServices(configuration);
@@ -34,6 +35,7 @@ namespace YashfeenMedical.BLL
             services.AddScoped<IDoctorServices, DoctorServices>();
             services.AddScoped<ISpecialtyServices, SpecialtyServices>();
             services.AddScoped<IAppointmentServices, AppointmentServices>();
+            services.AddScoped<IDoctorScheduleServices, DoctorScheduleServices>();
 
             return services;
         }
