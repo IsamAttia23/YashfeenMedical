@@ -5,6 +5,9 @@ using YashfeenMedical.DAL.QueryModels;
 
 namespace YashfeenMedical.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
+
     public class AppointmentController : BaseController<int, IAppointmentServices, AppointmentDto, AppointmentCreationDto, AppointmentUpdateDto>
     {
         private readonly IAppointmentServices _appointmentServices;
@@ -15,17 +18,27 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAppointmentsAsync(AppointmentQueryModel queryModel)
+        public async Task<IActionResult> GetAppointmentsAsync([FromQuery] AppointmentQueryModel queryModel)
         {
             var result = await _appointmentServices.GetFilterdAppointmentsAsync(queryModel);
             return Ok(result);
         }
 
-        [HttpGet("today")]
-        public async Task<IActionResult> BringAppointmentsTodayAsync(AppointmentQueryModel queryModel , DateOnly date)
+        [HttpGet("/today")]
+        public async Task<IActionResult> BringAppointmentsTodayAsync([FromQuery] AppointmentQueryModel queryModel, DateOnly date)
         {
             var result = await _appointmentServices.BringAppointmentsTodayAsync(queryModel, date);
             return Ok(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync(AppointmentCreationDto creationDto)
+        {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await Add(creationDto);
+            return CreatedAtAction(nameof(Details), new { id = result.Id }, result);
         }
     }
 }

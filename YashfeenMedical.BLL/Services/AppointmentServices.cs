@@ -51,17 +51,38 @@ namespace YashfeenMedical.BLL.Services
             return paggedList;
         }
 
-        public async override Task<AppointmentDto> Add(AppointmentCreationDto creationDTO)
+        public async Task<AppointmentDto> Add(AppointmentCreationDto creatiomDto)
         {
-            await ValidateAppointmentCreationAsync(creationDTO);
+            var doctor = await ValidateAppointmentCreationAsync(creatiomDto);
 
-            var mappedApointment = _mapper.Map<Appointment>(creationDTO);
+            await _unitOfWork.BeginTransactionAsync();
 
+            try
+            {
+                var appointment = _mapper.Map<Appointment>(creatiomDto);
 
+                await _unitOfWork.Appointments.Add(appointment);
+                await _unitOfWork.SaveChangesAsync(); 
 
-            throw new NotImplementedException();
+                var invoice = CreateInitialInvoice(appointment, doctor);
+                await _unitOfWork.Invoices.Add(invoice);
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return _mapper.Map<AppointmentDto>(appointment);
+            }
+            catch (AppException)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
+            catch (Exception)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new InternalServerErorrException("Error occurred while creating the appointment.");
+            }
         }
-
         private async Task ValidatePatientAsync(int patientId)
         {
             var patient = await _unitOfWork.Patients.IsExists(patientId);
@@ -158,7 +179,7 @@ namespace YashfeenMedical.BLL.Services
           AppointmentStatus.NoShow
         };
 
-        private async Task ValidateAppointmentCreationAsync(AppointmentCreationDto creationDto)
+        private async Task<Doctor> ValidateAppointmentCreationAsync(AppointmentCreationDto creationDto)
         {
 
             ValidateAppointmentDate(creationDto.AppointmentDate, creationDto.StartTime);
@@ -177,19 +198,47 @@ namespace YashfeenMedical.BLL.Services
             await ValidateNoDoctorConflictAsync(creationDto);
 
             await ValidateNoPatientConflictAsync(creationDto);
+
+            return doctor;
         }
 
-        private Invoice GenerateInvoice(Appointment appointment)
+        private Invoice CreateInitialInvoice(Appointment appointment, Doctor doctor)
         {
-            var invoice = new Invoice()
+            var invoice = new Invoice
             {
                 AppointmentId = appointment.Id,
                 PatientId = appointment.PatientId,
-                InvoiceNumber = $"INV-{DateTime.Now:yyyyMMdd}-{appointment.Id}",
-                PaidAmount = appointment.Doctor.ConsultationFee
+                InvoiceNumber = GenerateInvoiceNumber(appointment),
+                SubTotal = doctor.ConsultationFee,
+                DiscountAmount = 0,
+                InsuranceCoverage = 0,
+                TaxAmount = 0,
+                TotalAmount = doctor.ConsultationFee,
+                PaidAmount = 0,
+                PaymentStatus = PaymentStatus.Pending,
+                IssuedAt = DateTimeOffset.UtcNow
             };
 
+            invoice.Items.Add(new InvoiceItem
+            {
+                Type = InvoiceItemType.Consultation,
+                Description = $"كشف طبي - د. {doctor.FullName}",
+                Quantity = 1,
+                UnitPrice = doctor.ConsultationFee,
+                Total = doctor.ConsultationFee
+            });
+
             return invoice;
+        }
+
+        private string GenerateInvoiceNumber(Appointment appointment)
+        {
+            return $"INV-{appointment.AppointmentDate:yyyyMMdd}-{appointment.Id}";
+        }
+
+        private int GetSlotDuration(AppointmentCreationDto dto)
+        {
+            return 30;
         }
     }
 }
