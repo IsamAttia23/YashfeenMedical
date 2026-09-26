@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,14 +28,86 @@ namespace YashfeenMedical.BLL.StateMachines
             _mapper = mapper;
         }
 
-        public Task<AppointmentDto> SetAppointmentAsNoShowAsync(int appointmentId)
+        public async Task<AppointmentDto> SetAppointmentAsNoShowAsync(int appointmentId, NoShowAppointmentDto noShowAppointment)
         {
-            throw new NotImplementedException();
+            var appointment = await GetAppointmentAsync(appointmentId);
+
+            if (appointment == null)
+                throw new NotFoundException("Appointment not found.");
+
+            if (appointment.Status != AppointmentStatus.Scheduled &&
+                appointment.Status != AppointmentStatus.Confirmed)
+            {
+                throw new BadRequestException(
+                    "Only scheduled or confirmed appointments can be marked as no-show.");
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                appointment.Status = AppointmentStatus.NoShow;
+
+                if (appointment.Invoice != null)
+                {
+                    if (noShowAppointment.ChargePatient)
+                    {
+                        appointment.Invoice.Status = InvoiceStatus.Pending;
+                    }
+                    else
+                    {
+                        appointment.Invoice.Status = InvoiceStatus.Cancelled;
+                        appointment.Invoice.CancelledAt = DateTimeOffset.UtcNow;
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return _mapper.Map<AppointmentDto>(appointment);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
         }
 
-        public Task<AppointmentDto> CancelAppointmentAsync(int appointmentId, string cancelReason)
+        public async Task<AppointmentDto> CancelAppointmentAsync(int appointmentId, CancelAppointmentDto cancellationReason)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(cancellationReason.CancellationReason))
+                throw new BadRequestException("Cancellation reason is required.");
+
+            var appointment = await GetAppointmentAsync(appointmentId);
+
+            ValidateAppointmentStatusForCancellation(appointment);
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                appointment.Status = AppointmentStatus.Cancelled;
+                appointment.CancellationReason = cancellationReason.CancellationReason.Trim();
+                appointment.CancelledAt = DateTimeOffset.UtcNow;
+
+                if (appointment.Invoice != null)
+                {
+                    appointment.Invoice.Status = InvoiceStatus.Cancelled;
+                    appointment.Invoice.CancelledAt = DateTimeOffset.UtcNow;
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return _mapper.Map<AppointmentDto>(appointment);
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
         }
 
         public async Task<AppointmentDto> ConfirmAppointmentAsync(int appointmentId)
@@ -123,6 +196,17 @@ namespace YashfeenMedical.BLL.StateMachines
 
             var result = _mapper.Map<MedicalRecordDto>(medicalRecord);
             return result;
+        }
+        private void ValidateAppointmentStatusForCancellation(Appointment appointment)
+        {
+            if (appointment.Status == AppointmentStatus.Cancelled)
+                throw new BadRequestException("Appointment is already cancelled.");
+
+            if (appointment.Status == AppointmentStatus.Completed)
+                throw new BadRequestException("Completed appointment cannot be cancelled.");
+
+            if (appointment.Status != AppointmentStatus.Scheduled && appointment.Status != AppointmentStatus.Confirmed)
+                throw new UnprocessableEntityException("you can only cancel the Scheduled or Confirmed appointments");
         }
     }
 }

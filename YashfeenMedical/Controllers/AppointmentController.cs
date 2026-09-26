@@ -68,5 +68,19 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
 
         }
+
+        [HttpPut("{id}/cancel")]
+        public async Task<IActionResult> CancelAppointmentAsync(int id, CancelAppointmentDto cancellationReason)
+        {
+            var result = await _stateMachine.CancelAppointmentAsync(id, cancellationReason);
+            return Ok(result);
+        }
+
+        [HttpPut("{id}/no-show")]
+        public async Task<IActionResult> SetAppointmentAsNoShowAsync(int id, NoShowAppointmentDto noShowAppointment)
+        {
+            var result = await _stateMachine.SetAppointmentAsNoShowAsync(id, noShowAppointment);
+            return Ok(result);
+        }
     }
 }

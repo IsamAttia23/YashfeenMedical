@@ -10,8 +10,8 @@ namespace YashfeenMedical.BLL.IStateMachines
     {
         Task<AppointmentDto> ConfirmAppointmentAsync(int appointmentId);
         Task<AppointmentDto> StartAppointmentAsync(int appointmentId);
-        Task<AppointmentDto> CancelAppointmentAsync(int appointmentId,string cancelReason);
-        Task<AppointmentDto> SetAppointmentAsNoShowAsync(int appointmentId);
+        Task<AppointmentDto> CancelAppointmentAsync(int appointmentId, CancelAppointmentDto cancellationReason);
+        Task<AppointmentDto> SetAppointmentAsNoShowAsync(int appointmentId, NoShowAppointmentDto noShowAppointment);
         Task<(AppointmentDto, MedicalRecordDto)> CompleteAppointmentAsync(int appointmentId, MedicalRecordCreationDto medicalRecord);
     }
 }
