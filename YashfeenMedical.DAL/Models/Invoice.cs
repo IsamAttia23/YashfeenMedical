@@ -30,6 +30,8 @@ public class Invoice : TEntity<int>
 
     public decimal PaidAmount { get; set; } // قد يكون جزئياً
 
+    public InvoiceStatus Status { get; set; }
+
     public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
     public PaymentMethod? PaymentMethod { get; set; }
@@ -37,6 +39,8 @@ public class Invoice : TEntity<int>
     public DateTimeOffset IssuedAt { get; set; } = DateTimeOffset.UtcNow;
 
     public DateTimeOffset? PaidAt { get; set; }
+
+    public DateTimeOffset CancelledAt { get; set; }
 
     public string? Notes { get; set; }
 

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.IRepositories;
@@ -11,7 +12,8 @@ namespace YashfeenMedical.DAL.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public override IQueryable<Appointment> SelectQuery => _context.Set<Appointment>().Where(a => a.DeletedOn == null);
+        public override IQueryable<Appointment> SelectQuery => _context.Set<Appointment>().Where(a => a.DeletedOn == null)
+            .Include(a => a.Invoice);
 
         public AppointmentRepository(ApplicationDbContext context) : base(context)
         {
