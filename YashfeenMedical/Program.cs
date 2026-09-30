@@ -8,6 +8,7 @@ var services = builder.Services;
 services.AddBllServices(builder.Configuration);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+services.AddAuthorization();
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();

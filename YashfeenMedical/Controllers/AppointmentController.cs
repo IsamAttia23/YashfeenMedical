@@ -28,7 +28,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("/today")]
+        [HttpGet("today")]
         public async Task<IActionResult> BringAppointmentsTodayAsync([FromQuery] AppointmentQueryModel queryModel)
         {
             var result = await _appointmentServices.BringAppointmentsTodayAsync(queryModel);

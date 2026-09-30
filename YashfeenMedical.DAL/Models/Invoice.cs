@@ -30,8 +30,6 @@ public class Invoice : TEntity<int>
 
     public decimal PaidAmount { get; set; } // قد يكون جزئياً
 
-    public InvoiceStatus Status { get; set; }
-
     public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
     public PaymentMethod? PaymentMethod { get; set; }

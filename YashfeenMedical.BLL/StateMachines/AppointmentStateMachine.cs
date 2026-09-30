@@ -52,11 +52,11 @@ namespace YashfeenMedical.BLL.StateMachines
                 {
                     if (noShowAppointment.ChargePatient)
                     {
-                        appointment.Invoice.Status = InvoiceStatus.Pending;
+                        appointment.Invoice.PaymentStatus = PaymentStatus.Pending;
                     }
                     else
                     {
-                        appointment.Invoice.Status = InvoiceStatus.Cancelled;
+                        appointment.Invoice.PaymentStatus = PaymentStatus.Cancelled;
                         appointment.Invoice.CancelledAt = DateTimeOffset.UtcNow;
                     }
                 }
@@ -93,7 +93,7 @@ namespace YashfeenMedical.BLL.StateMachines
 
                 if (appointment.Invoice != null)
                 {
-                    appointment.Invoice.Status = InvoiceStatus.Cancelled;
+                    appointment.Invoice.PaymentStatus = PaymentStatus.Cancelled;
                     appointment.Invoice.CancelledAt = DateTimeOffset.UtcNow;
                 }
 
