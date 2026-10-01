@@ -10,7 +10,7 @@ namespace YashfeenMedical.DAL.Models
     {
         public string Token { get; set; }
         public DateTimeOffset ExpireOn { get; set; }
-        public bool IsExpired => DateTime.UtcNow >= ExpireOn;
+        public bool IsExpired => DateTimeOffset.Now >= ExpireOn;
         public DateTimeOffset CreatedOn { get; set; }
         public DateTimeOffset? RevokedOn { get; set; }
         public bool IsActive => RevokedOn == null && !IsExpired;

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using YashfeenMedical.BLL.DTOs.Invoices;
 
 namespace YashfeenMedical.BLL.DTOs.MedicalRecords
 {
@@ -31,5 +32,7 @@ namespace YashfeenMedical.BLL.DTOs.MedicalRecords
         public DateOnly FollowUpDate { get; set; }
 
         public IList<int>? PrescriptionIds { get; set; }
+
+        public IList<InvoiceItemCreationDto>? InvoiceItems { get; set; }
     }
 }

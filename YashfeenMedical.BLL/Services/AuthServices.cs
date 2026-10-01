@@ -49,7 +49,7 @@ namespace YashfeenMedical.BLL.Services
             else
             {
                 refreshToken.Token = _jwtService.GenerateRefreshToken();
-                refreshToken.CreatedOn = DateTimeOffset.UtcNow;
+                refreshToken.CreatedOn = DateTimeOffset.Now;
                 refreshToken.ExpireOn = _jwtService.GetRefreshTokenExpiry();
                 authDto.RefreshToken = refreshToken.Token;
                 authDto.RefreshTokenExpiration = refreshToken.ExpireOn;
@@ -119,7 +119,7 @@ namespace YashfeenMedical.BLL.Services
             if (refreshToken.IsActive == false)
                 throw new NotFoundException("invalid refresh token");
 
-            refreshToken.RevokedOn = DateTimeOffset.UtcNow;
+            refreshToken.RevokedOn = DateTimeOffset.Now;
             await _userManagmentServices.UpdateUserAsync(user);
 
         }
@@ -137,7 +137,7 @@ namespace YashfeenMedical.BLL.Services
             if (refreshToken.IsActive == false)
                 throw new NotFoundException("invalid refresh token");
 
-            refreshToken.RevokedOn = DateTimeOffset.UtcNow;
+            refreshToken.RevokedOn = DateTimeOffset.Now;
 
             var newRefreshToken = await AssignRefreshTokenToUser(user, authDto);
 
@@ -177,7 +177,7 @@ namespace YashfeenMedical.BLL.Services
                     UserName = creationDto.UserName,
                     Email = creationDto.Email,
                     IsActive = true,
-                    CreatedOn = DateTimeOffset.UtcNow,
+                    CreatedOn = DateTimeOffset.Now,
                     PhoneNumber = creationDto.PhoneNumber,
 
                 };
@@ -222,12 +222,12 @@ namespace YashfeenMedical.BLL.Services
 
         private async Task SetLastLogin(ApplicationUser user)
         {
-            user.LastLogin = DateTimeOffset.UtcNow;
+            user.LastLogin = DateTimeOffset.Now;
             await _userManagmentServices.UpdateUserAsync(user);
         }
         private async Task SetLastInvalidLoginAttempt(ApplicationUser user)
         {
-            user.LastInvalidLoginAttempt = DateTimeOffset.UtcNow;
+            user.LastInvalidLoginAttempt = DateTimeOffset.Now;
             await _userManagmentServices.UpdateUserAsync(user);
         }
     }

@@ -38,7 +38,7 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
     {
         var entity = _mapper.Map<TEntity>(creationDTO);
 
-        entity.CreatedOn = DateTimeOffset.UtcNow;
+        entity.CreatedOn = DateTimeOffset.Now;
 
         await _repository.Add(entity);
         await _repository.SaveChanges();
@@ -85,7 +85,7 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
         var mappedEntity = _mapper.Map(updateDto, entity);
 
-        mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
+        mappedEntity.UpdatedOn = DateTimeOffset.Now;
 
         await _repository.Update(mappedEntity);
         await _repository.SaveChanges();

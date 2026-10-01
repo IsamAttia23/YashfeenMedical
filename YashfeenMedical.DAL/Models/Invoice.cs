@@ -34,7 +34,7 @@ public class Invoice : TEntity<int>
 
     public PaymentMethod? PaymentMethod { get; set; }
 
-    public DateTimeOffset IssuedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset IssuedAt { get; set; } = DateTimeOffset.Now;
 
     public DateTimeOffset? PaidAt { get; set; }
 

@@ -254,7 +254,7 @@ namespace YashfeenMedical.BLL.Services
                 await SetEmail(user, updateDto.Email);
                 await SetPhoneNumber(user, updateDto.PhoneNumber);
 
-                mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
+                mappedEntity.UpdatedOn = DateTimeOffset.Now;
 
                 await _unitOfWork.Doctors.Update(mappedEntity);
                 await _unitOfWork.SaveChangesAsync();
@@ -301,7 +301,7 @@ namespace YashfeenMedical.BLL.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                user.DeletedOn = DateTimeOffset.UtcNow;
+                user.DeletedOn = DateTimeOffset.Now;
                 user.IsActive = false;
                 await _userManagmentServices.UpdateUserAsync(user);
                 await _repository.Delete(id);
@@ -371,7 +371,7 @@ namespace YashfeenMedical.BLL.Services
                 UserName = creationDto.UserName,
                 Email = creationDto.Email,
                 IsActive = true,
-                CreatedOn = DateTimeOffset.UtcNow,
+                CreatedOn = DateTimeOffset.Now,
                 PhoneNumber = creationDto.PhoneNumber
             };
 
@@ -422,6 +422,8 @@ namespace YashfeenMedical.BLL.Services
                         TimeSpan.FromHours(1));
             }
 
+            // no-op: ensure file included in patch
+            // no-op: patched to ensure context preserved
             return result;
         }
 

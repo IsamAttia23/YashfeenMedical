@@ -32,7 +32,7 @@ namespace YashfeenMedical.DAL.Repositories
         public virtual async Task Delete(TId id)
         {
             var entity = await GetById(id);
-            entity.DeletedOn = DateTimeOffset.UtcNow;
+            entity.DeletedOn = DateTimeOffset.Now;
             await Update(entity);
         }
 

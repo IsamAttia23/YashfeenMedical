@@ -202,7 +202,7 @@ namespace YashfeenMedical.BLL.Services
                 await SetEmail(user, updateDto.Email);
                 await SetPhoneNumber(user, updateDto.PhoneNumber);
 
-                mappedEntity.UpdatedOn = DateTimeOffset.UtcNow;
+                mappedEntity.UpdatedOn = DateTimeOffset.Now;
 
                 await _unitOfWork.Patients.Update(mappedEntity);
                 await _unitOfWork.SaveChangesAsync();
@@ -250,7 +250,7 @@ namespace YashfeenMedical.BLL.Services
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                user.DeletedOn = DateTimeOffset.UtcNow;
+                user.DeletedOn = DateTimeOffset.Now;
                 user.IsActive = false;
                 await _userManagmentServices.UpdateUserAsync(user);
                 await _repository.Delete(id);

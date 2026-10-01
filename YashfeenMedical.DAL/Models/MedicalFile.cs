@@ -30,5 +30,5 @@ public class MedicalFile : TEntity<int>
 
     public string? Description { get; set; }
 
-    public DateTimeOffset UploadedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UploadedAt { get; set; } = DateTimeOffset.Now;
 }

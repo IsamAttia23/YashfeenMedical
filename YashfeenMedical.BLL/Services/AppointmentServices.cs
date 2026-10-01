@@ -64,7 +64,7 @@ namespace YashfeenMedical.BLL.Services
                 appointment.Status = AppointmentStatus.Scheduled;
 
                 await _unitOfWork.Appointments.Add(appointment);
-                await _unitOfWork.SaveChangesAsync(); 
+                await _unitOfWork.SaveChangesAsync();
 
                 var invoice = CreateInitialInvoice(appointment, doctor);
                 await _unitOfWork.Invoices.Add(invoice);
@@ -78,6 +78,11 @@ namespace YashfeenMedical.BLL.Services
             {
                 await _unitOfWork.RollbackTransactionAsync();
                 throw;
+            }
+            catch (DbUpdateException dbEx)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new ConflictException($"Database update error occurred while creating the appointment.{dbEx.Message}");
             }
             catch (Exception)
             {
@@ -103,12 +108,12 @@ namespace YashfeenMedical.BLL.Services
 
         private void ValidateAppointmentDate(DateOnly appointmentDate, TimeOnly startTime)
         {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
 
             if (appointmentDate < today)
                 throw new BadRequestException("can't book an appointment in the past");
 
-            if (appointmentDate == today && startTime <= TimeOnly.FromDateTime(DateTime.UtcNow))
+            if (appointmentDate == today && startTime <= TimeOnly.FromDateTime(DateTime.Now))
                 throw new BadRequestException("can't book an appointment for a time that has already passed today");
         }
 
@@ -219,7 +224,7 @@ namespace YashfeenMedical.BLL.Services
                 TotalAmount = doctor.ConsultationFee,
                 PaidAmount = 0,
                 PaymentStatus = PaymentStatus.Pending,
-                IssuedAt = DateTimeOffset.UtcNow
+                IssuedAt = DateTimeOffset.Now
             };
 
             invoice.Items.Add(new InvoiceItem

@@ -65,7 +65,7 @@ namespace YashfeenMedical.DAL.Repositories
 
             if (queryModel.AgeFrom.HasValue)
             {
-                var maxBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-queryModel.AgeFrom.Value));
+                var maxBirthDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-queryModel.AgeFrom.Value));
 
                 patients = patients.Where(p =>
                 p.DateOfBirth >= maxBirthDate);
@@ -73,7 +73,7 @@ namespace YashfeenMedical.DAL.Repositories
 
             if (queryModel.AgeTo.HasValue)
             {
-                var minBirthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-(queryModel.AgeFrom.Value+1)));
+                var minBirthDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-(queryModel.AgeFrom.Value+1)));
 
                 patients = patients.Where(p =>
                 p.DateOfBirth <= minBirthDate);

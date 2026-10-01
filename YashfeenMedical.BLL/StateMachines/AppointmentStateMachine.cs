@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using YashfeenMedical.BLL.DTOs.Appointments;
+using YashfeenMedical.BLL.DTOs.Invoices;
 using YashfeenMedical.BLL.DTOs.MedicalRecords;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.BLL.IStateMachines;
@@ -57,7 +58,7 @@ namespace YashfeenMedical.BLL.StateMachines
                     else
                     {
                         appointment.Invoice.PaymentStatus = PaymentStatus.Cancelled;
-                        appointment.Invoice.CancelledAt = DateTimeOffset.UtcNow;
+                        appointment.Invoice.CancelledAt = DateTimeOffset.Now;
                     }
                 }
 
@@ -89,12 +90,12 @@ namespace YashfeenMedical.BLL.StateMachines
             {
                 appointment.Status = AppointmentStatus.Cancelled;
                 appointment.CancellationReason = cancellationReason.CancellationReason.Trim();
-                appointment.CancelledAt = DateTimeOffset.UtcNow;
+                appointment.CancelledAt = DateTimeOffset.Now;
 
                 if (appointment.Invoice != null)
                 {
                     appointment.Invoice.PaymentStatus = PaymentStatus.Cancelled;
-                    appointment.Invoice.CancelledAt = DateTimeOffset.UtcNow;
+                    appointment.Invoice.CancelledAt = DateTimeOffset.Now;
                 }
 
                 await _unitOfWork.SaveChangesAsync();
@@ -155,6 +156,8 @@ namespace YashfeenMedical.BLL.StateMachines
                 await _appointmentRepository.Update(appointment);
                 var medicalRecordDto = await CreateInitialMedicalRecord(appointment, medicalRecord);
 
+                await RecalculateInvoiceAsync(appointment, medicalRecord.InvoiceItems);
+
                 await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
 
@@ -207,6 +210,35 @@ namespace YashfeenMedical.BLL.StateMachines
 
             if (appointment.Status != AppointmentStatus.Scheduled && appointment.Status != AppointmentStatus.Confirmed)
                 throw new UnprocessableEntityException("you can only cancel the Scheduled or Confirmed appointments");
+        }
+        private async Task RecalculateInvoiceAsync(Appointment appointment, IList<InvoiceItemCreationDto>? invoiceItems)
+        {
+            var invoice = await _unitOfWork.Invoices.GetAll()
+                .Include(i => i.Items)
+                .FirstOrDefaultAsync(i => i.AppointmentId == appointment.Id)
+                ?? throw new NotFoundException("Invoice not found for this appointment");
+
+            if (invoiceItems != null && invoiceItems.Any())
+            {
+                foreach (var item in invoiceItems)
+                {
+                    var discountMultiplier = 1 - ((item.DiscountPercent ?? 0) / 100);
+
+                    var mappedItem = _mapper.Map<InvoiceItem>(item);
+
+                    mappedItem.Total = item.Quantity * item.UnitPrice * discountMultiplier;
+
+                    invoice.Items.Add(mappedItem);
+                }
+            }
+
+            invoice.SubTotal = invoice.Items.Sum(i => i.Total);
+            invoice.TotalAmount = invoice.SubTotal
+                                 - invoice.DiscountAmount
+                                 - invoice.InsuranceCoverage
+                                 + invoice.TaxAmount;
+
+            await _unitOfWork.Invoices.Update(invoice);
         }
     }
 }

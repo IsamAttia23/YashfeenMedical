@@ -28,11 +28,11 @@ public class JwtService : IJwtService
         var signingCredrntals = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
         var claims = await GetUserClaims(user);
 
-        var result = new JwtSecurityToken(
+            var result = new JwtSecurityToken(
             issuer: _settings.Issuer,
             audience: _settings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_settings.AccessTokenExpiryMinutes),
+            expires: DateTime.Now.AddMinutes(_settings.AccessTokenExpiryMinutes),
             signingCredentials: signingCredrntals
             );
 
@@ -72,10 +72,10 @@ public class JwtService : IJwtService
     }
 
     public DateTimeOffset GetAccessTokenExpiry() =>
-        DateTimeOffset.UtcNow.AddMinutes(_settings.AccessTokenExpiryMinutes);
+        DateTimeOffset.Now.AddMinutes(_settings.AccessTokenExpiryMinutes);
 
     public DateTimeOffset GetRefreshTokenExpiry() =>
-        DateTimeOffset.UtcNow.AddDays(_settings.RefreshTokenExpiryDays);
+        DateTimeOffset.Now.AddDays(_settings.RefreshTokenExpiryDays);
 
     public async Task<IEnumerable<Claim>> GetUserClaims(ApplicationUser user)
     {

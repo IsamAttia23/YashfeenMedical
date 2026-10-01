@@ -11,7 +11,7 @@ namespace YashfeenMedical.DAL.Shared.Entities
         public TId Id { get; set; }
 
         [Required]
-        public DateTimeOffset CreatedOn { get; set; }
+        public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.Now;
 
         public DateTimeOffset? DeletedOn { get; set; }
         public DateTimeOffset? UpdatedOn { get; set; }

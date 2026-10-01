@@ -41,7 +41,7 @@ public class LocalFileStorageService : IFileStorageService
 
     public string GenerateSignedUrl(string relativePath, TimeSpan validFor)
     {
-        var expiry = DateTimeOffset.UtcNow.Add(validFor).ToUnixTimeSeconds();
+        var expiry = DateTimeOffset.Now.Add(validFor).ToUnixTimeSeconds();
         var signature = ComputeSignature(relativePath, expiry);
 
         return $"/api/files/stream?path={Uri.EscapeDataString(relativePath)}&expires={expiry}&sig={signature}";
@@ -49,7 +49,7 @@ public class LocalFileStorageService : IFileStorageService
 
     public bool ValidateSignedUrl(string relativePath, string signature, long expiryUnixSeconds)
     {
-        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() > expiryUnixSeconds)
+        if (DateTimeOffset.Now.ToUnixTimeSeconds() > expiryUnixSeconds)
             return false; // انتهت صلاحية الرابط
 
         var expectedSignature = ComputeSignature(relativePath, expiryUnixSeconds);
