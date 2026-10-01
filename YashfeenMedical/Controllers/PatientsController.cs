@@ -19,6 +19,7 @@ namespace YashfeenMedical.API.Controllers
             _patientServices = services;
         }
 
+        [Authorize(Roles = "Admin,Reception,Doctor,Nurse")]
         [HttpGet]
         public async Task<IActionResult> GetPatientsAsync([FromQuery] PatientQueryModel patientQuery)
         {
@@ -33,6 +34,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Doctor,Nurse")]
         [HttpGet("{id}/medical-records")]
         public async Task<IActionResult> GetPatientMedicalRecords(int id, [FromQuery] PaginationQuery queryModel)
         {
@@ -40,6 +42,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Doctor,Nurse")]
         [HttpGet("{id}/prescriptions")]
         public async Task<IActionResult> GetPatientPrescriptions(int id, [FromQuery] PaginationQuery queryModel)
         {
@@ -47,6 +50,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Patient,Accountant")]
         [HttpGet("{id}/invoices")]
         public async Task<IActionResult> GetPatientInvoices(int id, [FromQuery] PaginationQuery queryModel)
         {
@@ -54,6 +58,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Doctor,Nurse")]
         [HttpGet("{id}/files")]
         public async Task<IActionResult> GetPatientMedicalFiles(int id, [FromQuery] PaginationQuery queryModel)
         {
@@ -61,6 +66,7 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id}/toggle-activity")]
         public async Task<IActionResult> TogglePatientActivity(int id)
         {
@@ -68,11 +74,33 @@ namespace YashfeenMedical.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin,Reception,Patient")]
         [HttpPost("{id}/Photo")]
         public async Task<IActionResult> UploadPatientPhoto(int id, IFormFile profilePhoto)
         {
             var result = await _patientServices.UploadPatientPhoto(id, profilePhoto);
             return Ok("Patient photo uploaded successfully.");
+        }
+
+        [Authorize(Roles = "Admin,Reception,Doctor,Nurse,Patient")]
+        [HttpGet("{id}")]
+        public async override Task<IActionResult> Details(int id)
+        {
+            return await base.Details(id);
+        }
+
+        [Authorize(Roles = "Admin,Reception")]
+        [HttpPut("{id}")]
+        public async override Task<IActionResult> Edit(int id, [FromBody] PatientUpdateDto updateDto)
+        {
+            return await base.Edit(id, updateDto);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async override Task<IActionResult> Delete(int id)
+        {
+            return await base.Delete(id);
         }
     }
 }
