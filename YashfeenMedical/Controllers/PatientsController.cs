@@ -91,7 +91,7 @@ namespace YashfeenMedical.API.Controllers
 
         [Authorize(Roles = "Admin,Reception")]
         [HttpPut("{id}")]
-        public async override Task<IActionResult> Edit(int id, [FromBody] PatientUpdateDto updateDto)
+        public async override Task<IActionResult> Edit(int id, [FromForm] PatientUpdateDto updateDto)
         {
             return await base.Edit(id, updateDto);
         }

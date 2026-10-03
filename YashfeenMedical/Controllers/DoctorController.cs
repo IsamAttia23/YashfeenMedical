@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using YashfeenMedical.BLL.DTOs.Doctors;
 using YashfeenMedical.BLL.DTOs.DoctorSchedules;
+using YashfeenMedical.BLL.DTOs.Patients;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.BLL.Services;
 using YashfeenMedical.DAL.QueryModels;
@@ -37,7 +38,7 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpGet("{id}/schedule")]
-        public async Task<IActionResult> GetDoctorScheduleAsync(int id, PaginationQuery paginationQuery)
+        public async Task<IActionResult> GetDoctorScheduleAsync(int id,[FromQuery] PaginationQuery paginationQuery)
         {
             var result = await _services.GetDoctorSchedule(id, paginationQuery);
 
@@ -75,7 +76,13 @@ namespace YashfeenMedical.API.Controllers
         public async Task<IActionResult> UploadPatientPhoto(int id, IFormFile profilePhoto)
         {
             var result = await _services.UploadDoctorPhoto(id, profilePhoto);
-            return Ok("Patient photo uploaded successfully.");
+            return Ok("Doctor photo uploaded successfully.");
+        }
+
+        [HttpPut("{id}")]
+        public async override Task<IActionResult> Edit(int id, [FromForm] DoctorUpdateDto updateDto)
+        {
+            return await base.Edit(id, updateDto);
         }
     }
 }
