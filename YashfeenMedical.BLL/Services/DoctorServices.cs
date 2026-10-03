@@ -72,6 +72,8 @@ namespace YashfeenMedical.BLL.Services
                 var (doctor, uploadedProfilePicturePath) = await CreateDoctorAsync(creationDto, user);
                 profilePicturePath = uploadedProfilePicturePath;
 
+                doctor.CreatedOn = DateTimeOffset.Now;
+
                 await _unitOfWork.Doctors.Add(doctor);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -146,6 +148,7 @@ namespace YashfeenMedical.BLL.Services
             {
                 var newSchedule = _mapper.Map<DoctorSchedule>(doctorSchedule);
                 newSchedule.DoctorId = doctorId;
+                newSchedule.MaxAppointmentsPerDay = SetMaxAppointmentsPerDay(newSchedule);
                 await _unitOfWork.DoctorSchedules.Add(newSchedule);
                 await _unitOfWork.SaveChangesAsync();
                 return _mapper.Map<DoctorScheduleDto>(newSchedule);
@@ -167,12 +170,14 @@ namespace YashfeenMedical.BLL.Services
             {
                 doctor.IsAvailable = true;
                 await _repository.Update(doctor);
+                await _unitOfWork.SaveChangesAsync();
                 return "doctor is now available";
             }
             else
             {
                 doctor.IsAvailable = false;
                 await _repository.Update(doctor);
+                await _unitOfWork.SaveChangesAsync();
                 return "doctor is now unavailable";
             }
         }
@@ -504,6 +509,23 @@ namespace YashfeenMedical.BLL.Services
             }
 
             return availableSlots;
+        }
+        private int SetMaxAppointmentsPerDay(DoctorSchedule schedule)
+        {
+            var totalMinutes = (schedule.EndTime.ToTimeSpan() - schedule.StartTime.ToTimeSpan()).TotalMinutes;
+
+            if (totalMinutes <= 0)
+                throw new BadRequestException(
+                    "EndTime must be after StartTime.");
+
+            if (schedule.SlotDurationMinutes <= 0)
+                throw new BadRequestException(
+                    "Slot duration must be greater than zero.");
+
+            var maxAppointmentsPerDay =
+                (int)(totalMinutes / schedule.SlotDurationMinutes);
+
+            return maxAppointmentsPerDay;
         }
         private void CheckMaxAppointmentsPerDay(List<TimeOnly> bookedTimes, DoctorSchedule schedule)
         {
