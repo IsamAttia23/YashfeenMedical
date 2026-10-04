@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Patients;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.QueryModels;
@@ -89,11 +90,18 @@ namespace YashfeenMedical.API.Controllers
             return await base.Details(id);
         }
 
-        [Authorize(Roles = "Admin,Reception")]
+        [Authorize(Roles = "Admin,Reception,Patient")]
         [HttpPut("{id}")]
-        public async override Task<IActionResult> Edit(int id, [FromForm] PatientUpdateDto updateDto)
+        public async Task<IActionResult> UpdateAsync(int id, PatientUpdateDto updateDto)
         {
-            return await base.Edit(id, updateDto);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!id.Equals(updateDto.Id))
+                return BadRequest("Id in URL does not match Id in body.");
+
+            var result = await Edit(id, updateDto);
+            return Ok(result);
         }
 
         [Authorize(Roles = "Admin")]

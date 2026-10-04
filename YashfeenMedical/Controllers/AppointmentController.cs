@@ -82,5 +82,18 @@ namespace YashfeenMedical.API.Controllers
             var result = await _stateMachine.SetAppointmentAsNoShowAsync(id, noShowAppointment);
             return Ok(result);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, AppointmentUpdateDto updateDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!id.Equals(updateDto.Id))
+                return BadRequest("Id in URL does not match Id in body.");
+
+            var result = await Edit(id, updateDto);
+            return Ok(result);
+        }
     }
 }

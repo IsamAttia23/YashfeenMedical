@@ -2,24 +2,17 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Doctors;
 using YashfeenMedical.BLL.DTOs.DoctorSchedules;
-using YashfeenMedical.BLL.DTOs.Patients;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.Enums;
 using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
-using YashfeenMedical.DAL.Repositories;
 using YashfeenMedical.Infrastructure.Exceptions;
 using YashfeenMedical.Infrastructure.FileStorage;
 using YashfeenMedical.Infrastructure.UsersManagment;
-using dal = YashfeenMedical.DAL;
 
 namespace YashfeenMedical.BLL.Services
 {
@@ -143,6 +136,7 @@ namespace YashfeenMedical.BLL.Services
             await IsExists(doctorId);
 
             var schdeule = await _unitOfWork.DoctorSchedules.GetById(doctorSchedule.Id);
+            
 
             if (schdeule == null)
             {
@@ -153,13 +147,14 @@ namespace YashfeenMedical.BLL.Services
                 await _unitOfWork.SaveChangesAsync();
                 return _mapper.Map<DoctorScheduleDto>(newSchedule);
             }
-            else
+            else 
             {
+                _mapper.Map(doctorSchedule, schdeule);
+                schdeule.MaxAppointmentsPerDay = SetMaxAppointmentsPerDay(schdeule);
                 await _unitOfWork.DoctorSchedules.Update(schdeule);
                 await _unitOfWork.SaveChangesAsync();
                 return _mapper.Map<DoctorScheduleDto>(schdeule);
             }
-            ;
         }
 
         public async Task<string> ToggleDoctorActivitiy(int doctorId)

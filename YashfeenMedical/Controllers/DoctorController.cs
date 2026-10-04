@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using YashfeenMedical.BLL.DTOs.Appointments;
 using YashfeenMedical.BLL.DTOs.Doctors;
 using YashfeenMedical.BLL.DTOs.DoctorSchedules;
 using YashfeenMedical.BLL.DTOs.Patients;
@@ -80,9 +81,16 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async override Task<IActionResult> Edit(int id, [FromForm] DoctorUpdateDto updateDto)
+        public async Task<IActionResult> UpdateAsync(int id, DoctorUpdateDto updateDto)
         {
-            return await base.Edit(id, updateDto);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!id.Equals(updateDto.Id))
+                return BadRequest("Id in URL does not match Id in body.");
+
+            var result = await Edit(id, updateDto);
+            return Ok(result);
         }
     }
 }

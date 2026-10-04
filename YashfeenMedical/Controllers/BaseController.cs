@@ -22,14 +22,11 @@ namespace YashfeenMedical.API.Controllers
         }
 
 
-        protected virtual async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
+        protected virtual async Task<TPaginationQueryModel<TDto>> GetAll([FromQuery] PaginationQuery paginationQuery)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var result = await _services.GetAll(paginationQuery);
 
-            return Ok(result);
+            return result;
         }
 
         [HttpGet("{id}")]
@@ -49,17 +46,11 @@ namespace YashfeenMedical.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public virtual async Task<IActionResult> Edit(TId id, [FromBody] TUpdateDto updateDto)
+        protected virtual async Task<TDto> Edit(TId id, [FromBody] TUpdateDto updateDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (!id.Equals(updateDto.Id))
-                return BadRequest("Id in URL does not match Id in body.");
-
             var result = await _services.Update(id, updateDto);
 
-            return Ok(result);
+            return result;
         }
 
         [HttpDelete("{id}")]
