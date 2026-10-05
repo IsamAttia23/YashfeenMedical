@@ -28,5 +28,7 @@ namespace YashfeenMedical.BLL.DTOs.Appointments
 
         public string? Notes { get; set; }
         public string? CancellationReason { get; set; }
+
+        public byte[] RowVersion { get; set; } = null!;
     }
 }

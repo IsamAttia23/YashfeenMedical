@@ -1,10 +1,11 @@
-﻿using YashfeenMedical.DAL.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using System.Text;
+using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.ModelsConfigurations;
 
 namespace YashfeenMedical.DAL
@@ -45,20 +46,7 @@ namespace YashfeenMedical.DAL
             builder.Entity<IdentityRole>().ToTable("Roles", "security");
             builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims", "security");
 
-            new AppointmentConfiguration().Configure(builder.Entity<Appointment>());
-            new DoctorConfiguration().Configure(builder.Entity<Doctor>());
-            new DoctorScheduleConfiguration().Configure(builder.Entity<DoctorSchedule>());
-            new DoctorSpecialtyConfiguration().Configure(builder.Entity<DoctorSpecialty>());
-            new InsurancePolicyConfiguration().Configure(builder.Entity<InsurancePolicy>());
-            new InvoiceConfiguration().Configure(builder.Entity<Invoice>());
-            new InvoiceItemConfiguration().Configure(builder.Entity<InvoiceItem>());
-            new MedicalFileConfiguration().Configure(builder.Entity<MedicalFile>());
-            new MedicalRecordConfiguration().Configure(builder.Entity<MedicalRecord>());
-            new MedicationConfiguration().Configure(builder.Entity<Medication>());
-            new PatientConfiguration().Configure(builder.Entity<Patient>());
-            new PrescriptionConfiguration().Configure(builder.Entity<Prescription>());
-            new PrescriptionItemConfiguration().Configure(builder.Entity<PrescriptionItem>());
-            new SpecialtyConfiguration().Configure(builder.Entity<Specialty>());
+            builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
 
     }

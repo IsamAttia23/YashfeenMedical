@@ -36,7 +36,6 @@ namespace YashfeenMedical.DAL.Models
         public InsurancePolicy InsurancePolicy { get; set; }
         public IList<MedicalFile> MedicalFiles { get; set; }
 
-        [Timestamp]
-        public byte[] RowVerison { get; set; }
+        public byte[] RowVersion { get; set; } = null!;
     }
 }

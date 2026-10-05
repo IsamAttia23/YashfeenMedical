@@ -33,5 +33,7 @@ namespace YashfeenMedical.BLL.DTOs.Patients
 
         [Required]
         public Gender Gender { get; set; }
+
+        public byte[] RowVersion { get; set; } = null!;
     }
 }

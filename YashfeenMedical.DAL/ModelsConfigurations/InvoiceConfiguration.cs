@@ -28,6 +28,8 @@ namespace YashfeenMedical.DAL.ModelsConfigurations
             builder.Property(i => i.PaymentStatus).HasConversion<string>().HasMaxLength(15);
             builder.Property(i => i.PaymentMethod).HasConversion<string>().HasMaxLength(15);
 
+            builder.Property(p => p.RowVersion).IsRequired().IsConcurrencyToken();
+
             foreach (var money in new[]
                    {
                          nameof(Invoice.SubTotal), nameof(Invoice.DiscountAmount),

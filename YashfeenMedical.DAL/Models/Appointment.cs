@@ -48,7 +48,6 @@ namespace YashfeenMedical.DAL.Models
         public Invoice Invoice { get; set; }
         public IList<MedicalFile> MedicalFiles { get; set; }
 
-        [Timestamp]
-        public byte[] RowVerison { get; set; }
+        public byte[] RowVersion { get; set; } = null!;
     }
 }
