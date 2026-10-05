@@ -29,6 +29,7 @@ namespace YashfeenMedical.BLL
             services.AddInfrastructureServices(configuration);
             services.AddScoped<IPaginationServices, PaginationServices>();
             services.AddScoped<IAppointmentStateMachine, AppointmentStateMachine>();
+            services.AddScoped<IPrescriptionStateMachine, PrescriptionStateMachine>();
 
             services.AddScoped<IAuthServices,AuthServices>();
             services.AddScoped<IPatientServices, PatientServices>();
