@@ -56,5 +56,9 @@ namespace YashfeenMedical.DAL.Repositories
             return doctors;
         }
 
+        public void SetRowVersion(Doctor doctor, byte[] rowVersion)
+        {
+            _context.Entry(doctor).Property(d => d.RowVersion).OriginalValue = rowVersion;
+        }
     }
 }

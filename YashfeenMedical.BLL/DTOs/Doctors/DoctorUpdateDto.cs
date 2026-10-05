@@ -32,5 +32,7 @@ namespace YashfeenMedical.BLL.DTOs.Doctors
         public IFormFile? ProfilePhoto { get; set; }
 
         public IList<int>? SpecialtyIds { get; set; }
+
+        public byte[]? RowVersion { get; set; }
     }
 }

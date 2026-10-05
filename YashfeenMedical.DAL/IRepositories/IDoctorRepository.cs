@@ -6,5 +6,7 @@ namespace YashfeenMedical.DAL.IRepositories
     public interface IDoctorRepository : IRepository<Doctor, int>
     {
         IQueryable<Doctor> GetFilteredDoctorsAsync(DoctorQueryModel queryModel);
+
+        void SetRowVersion(Doctor doctor, byte[] rowVersion);
     }
 }

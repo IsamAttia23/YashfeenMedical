@@ -36,28 +36,28 @@ namespace YashfeenMedical.DAL.Repositories
             await Update(entity);
         }
 
-        public async Task<TEntity?> GetById(TId id)
+        public virtual async Task<TEntity?> GetById(TId id)
         {
             return await FinalQuery.FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<bool> IsExists(TId id)
+        public virtual async Task<bool> IsExists(TId id)
         {
             return await FinalQuery.AnyAsync(x => x.Id.Equals(id));
         }
 
-        public Task Update(TEntity entity)
+        public virtual Task Update(TEntity entity)
         {
             _context.Update(entity);
             return Task.CompletedTask;
         }
 
-        public async Task SaveChanges()
+        public virtual async Task SaveChanges()
         {
             await _context.SaveChangesAsync();
         }
 
-        public  IQueryable<TEntity> GetAll()
+        public virtual IQueryable<TEntity> GetAll()
         {
             return FinalQuery;
         }

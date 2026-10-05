@@ -45,6 +45,5 @@ public class Invoice : TEntity<int>
 
     public ICollection<InvoiceItem> Items { get; set; } = new List<InvoiceItem>();
 
-    [Timestamp]
-    public byte[] RowVerison { get; set; }
+    public byte[] RowVersion { get; set; } = null!;
 }

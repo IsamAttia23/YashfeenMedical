@@ -229,6 +229,8 @@ namespace YashfeenMedical.BLL.Services
         {
             var doctor = await _repository.GetById(id);
 
+            updateDto.RowVersion = doctor.RowVersion;
+
             if (doctor == null)
                 throw new NotFoundException("The request entity dosen't exits");
 
@@ -247,6 +249,8 @@ namespace YashfeenMedical.BLL.Services
                 }
 
                 var mappedEntity = _mapper.Map(updateDto, doctor);
+
+                _repository.SetRowVersion(mappedEntity, updateDto.RowVersion);
 
                 var user = await _userManagmentServices.FindUserAsync(mappedEntity.UserId);
 
