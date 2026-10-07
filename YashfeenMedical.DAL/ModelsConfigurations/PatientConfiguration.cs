@@ -24,7 +24,7 @@ namespace YashfeenMedical.DAL.ModelsConfigurations
             builder.Property(p => p.Gender).HasConversion<string>().HasMaxLength(10);
             builder.Property(p => p.BloodType).HasConversion<string>().HasMaxLength(20);
 
-            builder.Property(p => p.RowVersion).IsRequired().IsConcurrencyToken();
+            builder.Property(p => p.RowVersion).IsRowVersion().IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
         }
     }
 }

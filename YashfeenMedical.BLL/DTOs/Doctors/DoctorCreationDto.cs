@@ -25,6 +25,6 @@ namespace YashfeenMedical.BLL.DTOs.Doctors
 
         public IList<int> Specialties { get; set; }
 
-        public byte[]? RowVersion { get; set; }
+       // public byte[]? RowVersion { get; set; }
     }
 }

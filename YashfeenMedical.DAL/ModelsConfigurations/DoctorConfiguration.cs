@@ -27,7 +27,7 @@ namespace YashfeenMedical.DAL.ModelsConfigurations
             builder.Property(d => d.LicenseNumber).IsRequired().HasMaxLength(50);
             builder.Property(d => d.ConsultationFee).HasColumnType("decimal(10,2)");
 
-            builder.Property(p => p.RowVersion).IsRequired().IsConcurrencyToken();
+            builder.Property(p => p.RowVersion).IsRowVersion().IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
         }
     }
 }
