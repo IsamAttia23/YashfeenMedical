@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
 
 namespace YashfeenMedical.DAL.IRepositories
@@ -15,6 +16,7 @@ namespace YashfeenMedical.DAL.IRepositories
         Task Delete(TId id);
         Task Update(TEntity entity);
         Task<bool> IsExists(TId id);
+        void SetRowVersion<Entity>(Entity entity, byte[] rowVersion) where Entity : class, IRowVersionProperty;
         Task SaveChanges();
     }
 }

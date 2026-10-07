@@ -51,7 +51,7 @@ namespace YashfeenMedical.BLL.Services
             return paggedList;
         }
 
-        public async Task<AppointmentDto> Add(AppointmentCreationDto creatiomDto)
+        public override async Task<AppointmentDto> Add(AppointmentCreationDto creatiomDto)
         {
             var doctor = await ValidateAppointmentCreationAsync(creatiomDto);
 
@@ -89,6 +89,21 @@ namespace YashfeenMedical.BLL.Services
                 await _unitOfWork.RollbackTransactionAsync();
                 throw new InternalServerErorrException("Error occurred while creating the appointment.");
             }
+        }
+
+        public override async Task<AppointmentDto> Update(int id, AppointmentUpdateDto updateDto)
+        {
+            var appointment = await _unitOfWork.Appointments.GetById(id)
+                ?? throw new NotFoundException("The Requested Appointment Dosen't Exits !");
+
+            var mappedEntity = _mapper.Map(updateDto, appointment);
+            _unitOfWork.Appointments.SetRowVersion<Appointment>(mappedEntity, updateDto.RowVersion);
+
+            await _unitOfWork.Appointments.Update(mappedEntity);
+            await _unitOfWork.SaveChangesAsync();
+
+            var result = _mapper.Map<AppointmentDto>(mappedEntity);
+            return result;
         }
 
         private async Task ValidatePatientAsync(int patientId)

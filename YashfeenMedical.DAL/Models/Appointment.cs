@@ -1,14 +1,15 @@
-﻿using YashfeenMedical.DAL.Enums;
-using YashfeenMedical.DAL.Shared.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using YashfeenMedical.DAL.Enums;
+using YashfeenMedical.DAL.IRepositories;
+using YashfeenMedical.DAL.Shared.Entities;
 
 namespace YashfeenMedical.DAL.Models
 {
-    public class Appointment : TEntity<int>
+    public class Appointment : TEntity<int> , IRowVersionProperty
     {
         [ForeignKey("PatientId")]
         public int PatientId { get; set; }

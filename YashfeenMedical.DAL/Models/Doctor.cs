@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using YashfeenMedical.DAL.IRepositories;
 
 namespace YashfeenMedical.DAL.Models
 {
-    public class Doctor : TEntity<int>
+    public class Doctor : TEntity<int> , IRowVersionProperty
     {
 
         [ForeignKey("UserId")]

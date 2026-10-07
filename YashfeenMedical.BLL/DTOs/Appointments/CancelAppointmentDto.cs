@@ -9,5 +9,6 @@ namespace YashfeenMedical.BLL.DTOs.Appointments
     {
         [Required]
         public string CancellationReason { get; set; } = string.Empty;
+        public byte[]? RowVersion { get; set; }
     }
 }

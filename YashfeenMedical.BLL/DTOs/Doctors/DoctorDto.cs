@@ -21,7 +21,7 @@ namespace YashfeenMedical.BLL.DTOs.Doctors
 
         public string? Bio { get; set; }
 
-        public bool IsAvailbe { get; set; }
+        public bool IsAvailable { get; set; }
 
         public decimal ConsultationFee { get; set; }
 

@@ -196,6 +196,8 @@ namespace YashfeenMedical.BLL.Services
 
                 var mappedEntity = _mapper.Map(updateDto, patient);
 
+                _repository.SetRowVersion<Patient>(mappedEntity, updateDto.RowVersion);
+
                 var user = await _userManagmentServices.FindUserAsync(mappedEntity.UserId);
 
                 await SetUserName(user, updateDto.UserName);
