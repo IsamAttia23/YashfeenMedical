@@ -12,8 +12,8 @@ using YashfeenMedical.DAL;
 namespace YashfeenMedical.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261005080247_apply-RowVersion")]
-    partial class applyRowVersion
+    [Migration("20261006183542_apply-rowVersion")]
+    partial class applyrowVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -294,7 +294,8 @@ namespace YashfeenMedical.DAL.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
@@ -363,7 +364,8 @@ namespace YashfeenMedical.DAL.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<DateTimeOffset?>("UpdatedOn")
                         .HasColumnType("datetimeoffset");
@@ -567,7 +569,8 @@ namespace YashfeenMedical.DAL.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<decimal>("SubTotal")
                         .HasColumnType("decimal(10,2)");
@@ -882,7 +885,8 @@ namespace YashfeenMedical.DAL.Migrations
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<DateTimeOffset?>("UpdatedOn")
                         .HasColumnType("datetimeoffset");

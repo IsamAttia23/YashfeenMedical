@@ -27,7 +27,7 @@ namespace YashfeenMedical.DAL.ModelsConfigurations
 
             builder.HasIndex(a => new { a.DoctorId, a.AppointmentDate, a.StartTime }).IsUnique();
 
-            builder.Property(p => p.RowVersion).IsRequired().IsConcurrencyToken();
+            builder.Property(p => p.RowVersion).IsRowVersion().IsConcurrencyToken().ValueGeneratedOnAddOrUpdate();
 
         }
     }
