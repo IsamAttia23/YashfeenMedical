@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using YashfeenMedical.DAL.Enums;
+using YashfeenMedical.DAL.IRepositories;
 using YashfeenMedical.DAL.Shared.Entities;
 
 namespace YashfeenMedical.DAL.Models;
 
-public class Invoice : TEntity<int>
+public class Invoice : TEntity<int> , IRowVersionProperty
 {
     public int Id { get; set; }
 

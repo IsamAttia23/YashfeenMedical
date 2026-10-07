@@ -229,8 +229,6 @@ namespace YashfeenMedical.BLL.Services
         {
             var doctor = await _repository.GetById(id);
 
-            updateDto.RowVersion = doctor.RowVersion;
-
             if (doctor == null)
                 throw new NotFoundException("The request entity dosen't exits");
 
@@ -282,7 +280,10 @@ namespace YashfeenMedical.BLL.Services
             {
                 throw;
             }
-
+            catch(DbUpdateException ex)
+            {
+                throw new DbUpdateException(ex.Message);
+            }
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackTransactionAsync();
@@ -290,7 +291,7 @@ namespace YashfeenMedical.BLL.Services
                 if (newPofilePicturePath != null)
                     _fileStorageService.DeleteFile(newPofilePicturePath);
 
-                throw new Exception("Error occurred while saving the patient.", ex);
+                throw new Exception("Error occurred while saving the Doctor.", ex);
             }
         }
 

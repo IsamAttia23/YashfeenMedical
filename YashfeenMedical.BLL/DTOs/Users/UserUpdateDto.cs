@@ -16,6 +16,6 @@ namespace YashfeenMedical.BLL.DTOs.Users
         public string Email { get; set; }
 
         [Phone(ErrorMessage = "invalid phone number format")]
-        public string? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

@@ -32,5 +32,6 @@ namespace YashfeenMedical.BLL.DTOs.Appointments
         public DateTimeOffset? StartedAt { get; set; }
         public DateTimeOffset? CompletedAt { get; set; }
         public DateTimeOffset? CancelledAt { get; set; }
+        public byte[] RowVersion { get; set; }
     }
 }

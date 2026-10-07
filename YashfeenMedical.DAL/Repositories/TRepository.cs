@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using YashfeenMedical.DAL.IRepositories;
+using YashfeenMedical.DAL.Models;
 using YashfeenMedical.DAL.QueryModels;
 using YashfeenMedical.DAL.Shared.Entities;
 
@@ -56,7 +57,10 @@ namespace YashfeenMedical.DAL.Repositories
         {
             await _context.SaveChangesAsync();
         }
-
+        public void SetRowVersion<Entity>(Entity entity, byte[] rowVersion) where Entity : class , IRowVersionProperty
+        {
+            _context.Entry(entity).Property(e=> e.RowVersion).OriginalValue = rowVersion;
+        }
         public virtual IQueryable<TEntity> GetAll()
         {
             return FinalQuery;

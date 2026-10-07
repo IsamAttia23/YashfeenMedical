@@ -22,5 +22,6 @@ namespace YashfeenMedical.BLL.DTOs.Patients
         public string? ChronicDiseases { get; set; }
         public string? ProfilePhotoUrl { get; set; }
         public Gender Gender { get; set; }
+        public byte[]? RowVersion { get; set; }
     }
 }
