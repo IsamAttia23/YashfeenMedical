@@ -50,7 +50,10 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
     public virtual async Task Delete(TId id)
     {
-        var entity = await Details(id);
+        var entity = await _repository.GetById(id)
+            ?? throw new NotFoundException("The request entity dosen't exits");
+
+        await HasActiveRelationsAsync(entity);
 
         await _repository.Delete(id);
         await _repository.SaveChanges();
@@ -58,7 +61,7 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
     public virtual async Task<TPaginationQueryModel<TDto>> GetAll(PaginationQuery query)
     {
-        var entities =  _repository.GetAll();
+        var entities = _repository.GetAll();
 
         var result = await _paginationServices.GetPaggedList(entities.ProjectToType<TDto>(), query);
 
@@ -96,10 +99,18 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
     public async Task IsExists(TId id)
     {
-       var isExists = await _repository.IsExists(id);
+        var isExists = await _repository.IsExists(id);
 
         if (!isExists)
             throw new NotFoundException("The request entity dosen't exits");
     }
+
+    public async Task HasActiveRelationsAsync(TEntity entity)
+    {
+        var hasRealation = await _repository.HasActiveRelationsAsync(entity);
+        if (hasRealation)
+            throw new UnprocessableEntityException("Cannot Delete : This Entity has a Realation with Another Entity");
+    }
+
 }
 

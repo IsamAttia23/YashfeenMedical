@@ -17,6 +17,7 @@ namespace YashfeenMedical.DAL.IRepositories
         Task Update(TEntity entity);
         Task<bool> IsExists(TId id);
         void SetRowVersion<Entity>(Entity entity, byte[] rowVersion) where Entity : class, IRowVersionProperty;
+        Task<bool> HasActiveRelationsAsync(TEntity entity);
         Task SaveChanges();
     }
 }

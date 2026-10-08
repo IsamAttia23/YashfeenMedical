@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore.Metadata;
+using System.Linq.Expressions;
+using System.Reflection;
 using YashfeenMedical.DAL.IRepositories;
-using YashfeenMedical.DAL.Models;
-using YashfeenMedical.DAL.QueryModels;
 using YashfeenMedical.DAL.Shared.Entities;
 
 namespace YashfeenMedical.DAL.Repositories
@@ -57,13 +55,74 @@ namespace YashfeenMedical.DAL.Repositories
         {
             await _context.SaveChangesAsync();
         }
-        public void SetRowVersion<Entity>(Entity entity, byte[] rowVersion) where Entity : class , IRowVersionProperty
+        public void SetRowVersion<Entity>(Entity entity, byte[] rowVersion) where Entity : class, IRowVersionProperty
         {
-            _context.Entry(entity).Property(e=> e.RowVersion).OriginalValue = rowVersion;
+            _context.Entry(entity).Property(e => e.RowVersion).OriginalValue = rowVersion;
         }
+
         public virtual IQueryable<TEntity> GetAll()
         {
             return FinalQuery;
+        }
+
+        public async Task<bool> HasActiveRelationsAsync(TEntity entity)
+        {
+            var entityType = _context.Model.FindEntityType(typeof(TEntity));
+            if (entityType == null)
+                return false;
+
+            var method = typeof(TRepository<TEntity, TId>)
+                .GetMethod(nameof(AnyDependentAsync), BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+            foreach (var fk in entityType.GetReferencingForeignKeys())
+            {
+                var principalKey = fk.PrincipalKey.Properties[0];
+                var foreignKey = fk.Properties[0];
+
+                var id = _context.Entry(entity).Property(principalKey.Name).CurrentValue;
+                if (id == null)
+                    continue;
+
+                var dependentType = fk.DeclaringEntityType.ClrType;
+                var hasDeletedOn = fk.DeclaringEntityType.FindProperty("DeletedOn") != null;
+
+                var task = (Task<bool>)method
+                    .MakeGenericMethod(dependentType)
+                    .Invoke(this, new object[] { foreignKey, id, hasDeletedOn })!;
+
+                if (await task)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private async Task<bool> AnyDependentAsync<TDependent>(
+            IProperty foreignKey, object id, bool hasDeletedOn) where TDependent : class
+        {
+            var param = Expression.Parameter(typeof(TDependent), "x");
+
+            // EF.Property<TFk>(x, "ForeignKeyName") == id
+            var fkAccess = Expression.Call(
+                typeof(EF), nameof(EF.Property), new[] { foreignKey.ClrType },
+                param, Expression.Constant(foreignKey.Name));
+
+            Expression body = Expression.Equal(fkAccess, Expression.Constant(id, foreignKey.ClrType));
+
+            // && EF.Property<DateTimeOffset?>(x, "DeletedOn") == null
+            if (hasDeletedOn)
+            {
+                var deletedOn = Expression.Call(
+                    typeof(EF), nameof(EF.Property), new[] { typeof(DateTimeOffset?) },
+                    param, Expression.Constant("DeletedOn"));
+
+                body = Expression.AndAlso(
+                    body,
+                    Expression.Equal(deletedOn, Expression.Constant(null, typeof(DateTimeOffset?))));
+            }
+
+            var lambda = Expression.Lambda<Func<TDependent, bool>>(body, param);
+            return await _context.Set<TDependent>().AnyAsync(lambda);
         }
     }
 }

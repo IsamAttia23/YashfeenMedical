@@ -302,6 +302,8 @@ namespace YashfeenMedical.BLL.Services
             if (doctor == null)
                 throw new NotFoundException("The request entity dosen't exits");
 
+            await HasActiveRelationsAsync(doctor);
+
             var user = await _userManagmentServices.FindUserAsync(doctor.UserId);
             await _unitOfWork.BeginTransactionAsync();
             try
