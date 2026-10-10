@@ -1,4 +1,5 @@
 ﻿using MapsterMapper;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using YashfeenMedical.BLL.IServices;
 using YashfeenMedical.DAL.IRepositories;
@@ -25,13 +26,15 @@ public abstract class TEntityService<TEntity, TId, TDto, TCreationDto, TUpdateDt
 
     private readonly IPaginationServices _paginationServices;
     private readonly IMapper _mapper;
+    private readonly IEnumerable<YashfeenMedical.BLL.RecycleBin.IRecycleBinHandler> _recycleHandlers;
 
     public TEntityService(IRepository<TEntity, TId> repository, IMapper mapper,
-        IPaginationServices paginationServices)
+        IPaginationServices paginationServices, IEnumerable<YashfeenMedical.BLL.RecycleBin.IRecycleBinHandler>? recycleHandlers = null)
     {
         _repository = repository;
         _paginationServices = paginationServices;
         _mapper = mapper;
+        _recycleHandlers = recycleHandlers ?? Enumerable.Empty<YashfeenMedical.BLL.RecycleBin.IRecycleBinHandler>();
     }
 
     public virtual async Task<TDto> Add(TCreationDto creationDTO)

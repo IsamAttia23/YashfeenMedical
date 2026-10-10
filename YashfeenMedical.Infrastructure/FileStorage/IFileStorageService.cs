@@ -15,4 +15,11 @@ public interface IFileStorageService
     void DeleteFile(string relativePath);
 
     Task<string> SaveProfilePhoto(IFormFile profilePhoto, string folderName);
+
+    // Move a file from one relative path to another within the storage root.
+    // Throws if source does not exist or move fails.
+    Task MoveFileAsync(string relativeSourcePath, string relativeDestinationPath);
+
+    // Return true if file exists at the given relative path.
+    bool FileExists(string relativePath);
 }
