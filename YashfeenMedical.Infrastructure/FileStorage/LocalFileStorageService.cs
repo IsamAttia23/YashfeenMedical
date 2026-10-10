@@ -65,6 +65,29 @@ public class LocalFileStorageService : IFileStorageService
             File.Delete(fullPath);
     }
 
+    public bool FileExists(string relativePath)
+    {
+        var fullPath = Path.Combine(_rootPath, relativePath);
+        return File.Exists(fullPath);
+    }
+
+    public async Task MoveFileAsync(string relativeSourcePath, string relativeDestinationPath)
+    {
+        var sourceFull = Path.Combine(_rootPath, relativeSourcePath);
+        var destFull = Path.Combine(_rootPath, relativeDestinationPath);
+
+        if (!File.Exists(sourceFull))
+            throw new FileNotFoundException("Source file not found", sourceFull);
+
+        var destDir = Path.GetDirectoryName(destFull)!;
+        Directory.CreateDirectory(destDir);
+
+        // Use File.Move for an atomic move on same volume
+        File.Move(sourceFull, destFull);
+
+        await Task.CompletedTask;
+    }
+
     private string ComputeSignature(string relativePath, long expiryUnixSeconds)
     {
         using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(_signingKey));

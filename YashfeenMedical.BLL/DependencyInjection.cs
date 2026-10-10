@@ -37,6 +37,10 @@ namespace YashfeenMedical.BLL
             services.AddScoped<ISpecialtyServices, SpecialtyServices>();
             services.AddScoped<IAppointmentServices, AppointmentServices>();
             services.AddScoped<IMedicalRecordServices, MedicalRecordServices>();
+            // Recycle bin
+            services.AddScoped<YashfeenMedical.BLL.RecycleBin.RecycleBinService>();
+            services.AddScoped<YashfeenMedical.BLL.RecycleBin.IRecycleBinHandler, YashfeenMedical.BLL.RecycleBin.Handlers.PatientRecycleBinHandler>();
+            services.AddScoped<YashfeenMedical.BLL.RecycleBin.IRecycleBinHandler, YashfeenMedical.BLL.RecycleBin.Handlers.DoctorRecycleBinHandler>();
 
             return services;
         }
